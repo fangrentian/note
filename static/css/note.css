@@ -1,0 +1,14 @@
+
+.sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.sidebar:hover::-webkit-scrollbar-thumb {
+    width: 5px;
+    background: #42b983;
+}
+
+.sidebar .search input {
+    border-radius: 40px;
+}

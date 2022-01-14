@@ -1,26 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>ARES 笔记</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="description" content="Description">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
-</head>
-<body>
-  <div id="app"></div>
-  <script>
-    window.$docsify = {
-      logo: '/static/images/logo.png',
-      loadSidebar: true,
-      loadNavbar: true,
-      subMaxLevel: 2,
-      name: 'ARES 笔记',
-      repo: 'https://gitee.com/fangrentian/note'
-    }
-  </script>
-  <!-- Docsify v4 -->
-  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title> ares note </title>
+    <link rel="stylesheet" href="./static/css/ares_animate.min.css">
+    <link rel="stylesheet" href="./static/css/ares_hover_variant.min.css">
+    <link rel="stylesheet" href="./static/css/fa.css">
+    <link rel="stylesheet" href="./static/css/icon.css">
+    <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/buble.css"> -->
+    <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css"> -->
+    <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dolphin.css"> -->
+    <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/pure.css"> -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+    <link rel="stylesheet" href="./static/css/ares_reboot.css">
+    <link rel="stylesheet" href="./static/css/note.css"/>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      window.$docsify = {
+        auto2top: true,
+        logo: '/static/images/logo.png',
+        loadNavbar: true,
+        loadSidebar: true,
+        subMaxLevel: 1,
+        name: 'ARES 笔记',
+        repo: 'https://gitee.com/fangrentian/note',
+        search: {
+          placeholder: '输入关键词',
+        },
+        copyCode: {
+          buttonText : '复制',
+          errorText  : '复制出错',
+          successText: '复制成功'
+        }
+      }
+    </script>
+    <!-- Docsify v4 -->
+    <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify@4.12.2/lib/plugins/search.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/zoom-image.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-java.min.js"></script>
+  </body>
 </html>
