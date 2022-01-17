@@ -1,4 +1,6 @@
-
+.sidebar {
+    padding-top: 0;
+}
 .sidebar::-webkit-scrollbar {
     width: 5px;
 }
@@ -11,4 +13,10 @@
 
 .sidebar .search input {
     border-radius: 40px;
+}
+.sidebar ul li.active {
+    padding-right: 1px;
+}
+.sidebar ul li.active>a {
+    border-right-width: 5px;
 }

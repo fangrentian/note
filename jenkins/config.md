@@ -1,11 +1,12 @@
 <!--
  * @author: ares
  * @date: 2022-01-14 13:13:52
- * @lastEditTime: 2022-01-14 15:02:43
+ * @lastEditTime: 2022-01-14 15:28:35
  * @lastEditors: ares
  * @description: 
  * 
 -->
+
 ## docker jenkins安装
 
 ### 拉取镜像
@@ -83,3 +84,4 @@ cat /home/docker/jenkins/secrets/initialAdminPassword
 **在可选插件中搜索 [locale] 插件,并安装**
 ![](images/install-locale-plugin.png)
 
+插件安装完成后,勾选 [安装完成后重启Jenkins(空闲时)] 选项的话, jenkins会自动重启
