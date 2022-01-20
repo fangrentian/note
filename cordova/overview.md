@@ -1,4 +1,4 @@
-## 什么是cordova
+# 什么是cordova
 
 Cordova 是使用HTML，CSS和JavaScript构建混合移动应用程序的平台。Cordova是PhoneGap贡献给Apache后的开源项目，是从PhoneGap中抽出的核心代码，是驱动PhoneGap的核心引擎。你可以把它们的关系想象成类似于Webkit和Google Chrome的关系 。官方文档给了我们Cordova的定义:
 
@@ -10,11 +10,13 @@ Cordova还提供了一组统一的JavaScript类库，以及为这些类库所用
 
 Cordova支持如下移动操作系统:iOS, Android,ubuntu phone os, Blackberry, Windows Phone, Palm WebOS, Bada 和 Symbian。
 
+**参考文档**
+
 **官网** [https://cordova.apache.org/](https://cordova.apache.org/)
 
 **中文网** [http://cordova.axuer.com/](http://cordova.axuer.com/)
 
-## 历史背景
+# 历史背景
 
 Adobe将会继续以Cordova加上PhoneGap Build和Adobe Shadow的组合提供PhoneGap。 早在2011年10月，Adobe收购了Nitobi Software和它的PhoneGap产品，然后宣布这个移动开发框架将会继续开源，并把它提交到Apache Incubator，以便完全接受ASF的管治。我们想知道为什么Adobe会收购Nitobi并开源PhoneGap，尤其是为什么PhoneGap还会继续，如果另一个项目应该完成它的工作?
 
@@ -28,25 +30,25 @@ PhoneGap的项目主管Brian LeRoux指出开源PhoneGap的决定在Adobe收购Ni
 
 在微软2014年11月12日发布的Visual Studio 2015预览版本中已经集成了Cordova开发的相关工具，支持Apache Cordova 4.0.0，可以很方便的直接在上面开发Android, iOS以及Windows Phone的应用。同时该预览版本中还集成了Android模拟器以配合Android的开发调试。
 
-## Cordova特征
+# Cordova特征
 
-### 命令行界面(Cordova CLI)
+## 命令行界面(Cordova CLI)
 
 这是可用于启动项目，构建不同平台的进程，安装插件和许多其他有用的东西，使开发过程更容易的工具。您将在以后的章节中学习如何使用。
 
-### Cordova核心组件
+## Cordova核心组件
 
 Cordova提供了每个移动应用程序所需的核心组件。这些组件将用于创建应用程序的基础，所以我们可以花更多的时间来实现我们自己的逻辑。
 
-### Cordova外挂程式
+## Cordova外挂程式
 
 Cordova提供的API将用于实现本地移动功能到我们的JavaScript应用程序。
 
-### 许可证
+## 许可证
 
 Cordova按照Apache许可证2.0版授权。 Apache和Apache羽毛标志是Apache软件基金会的商标。
 
-## Cordova的优势
+# Cordova的优势
 
 * Cordova为构建混合移动应用程序提供了一个平台，因此我们可以开发一个应用程序，将在不同的移动平台IOS，Android，Windows Phone，Amazon-fireos，黑莓，Firefox OS，Ubuntu和tizien上使用。
 
@@ -56,7 +58,7 @@ Cordova按照Apache许可证2.0版授权。 Apache和Apache羽毛标志是Apache
 
 * 有大量的社区插件可以与Cordova一起使用。许多库和框架都经过优化以便使用它。
 
-## Cordova限制
+# Cordova限制
 
 * 混合应用程序比本地应用程序慢，因此对于需要大量数据和功能的大型应用程序使用Cordova不是最佳选择。
 

@@ -1,4 +1,4 @@
-## 什么是HTML
+# 什么是HTML
 
 超文本标记语言（英语：**HyperText Markup Language**，简称：**HTML**）是一种用于创建网页的标准标记语言. HTML 运行在浏览器上，由浏览器来解析. HTML代码里面是通过标签对的方式给文本添加语义，HTML使用的标签也称为元素，标签分为单标签和双标签. 其主要功能是负责页面的结构.
 
@@ -8,7 +8,7 @@
 
 [https://wangdoc.com/html/](https://wangdoc.com/html/)
 
-## 发展历史
+# 发展历史
 
 * 第一版 ——在1993年6月作为互联网工程工作小组（IETF）工作草案发布（并非标准）
 
@@ -22,7 +22,7 @@
 
 * HTML5 —— 2014年10月29日，万维网联盟宣布，经过接近8年的艰苦努力，该标准规范终于制定完成
 
-## 开发中的一些约定
+# 开发中的一些约定
 
 **在编辑HTML文件和使用有关标记符时有一些约定或默认的要求:**
 
@@ -36,11 +36,11 @@
 
 * 所有标签写在`<html>`标签中, 展示给用户看的内容写在`<body>`标签中,样式文件在`<head>`标签中通过`<link>`标签引入或写在`<style>`标签中, `<script>`标签在`</body>`之前引入;
 
-## HTML文档的后缀名
+# HTML文档的后缀名
 
 html和htm都可以作为html文档的后缀名，两种后缀名没有区别，都可以使用。
 
-## HTML的主体结构/骨架
+# HTML的主体结构/骨架
 
 ```html
 <!DOCTYPE html>
@@ -55,11 +55,11 @@ html和htm都可以作为html文档的后缀名，两种后缀名没有区别，
 </html>
 ```
 
-#### `<html>`标签
+## `<html>`标签
 
 `<html>`标签是 **HTML** 的核心, 所有的 **HTML** 标签都应该写在这对标签当中, 虽然不这样写网页也能正常显示.
 
-#### `<head>`标签
+## `<head>`标签
 
 主要写一些网页预定义属性，更准确一点来说叫做预定义信息，大部分信息不是给用户看的，而是给浏览器或者搜索引擎看的.
 
@@ -103,15 +103,15 @@ html和htm都可以作为html文档的后缀名，两种后缀名没有区别，
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     ```
 
-### 文档声明DTD
+# 文档声明DTD
 
-#### thml5文档声明
+## thml5文档声明
 
 ```html
 <!DOCTYPE html>
 ```
 
-#### html4.01文档声明
+## html4.01文档声明
 
 ```html
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">

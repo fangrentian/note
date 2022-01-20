@@ -6,7 +6,7 @@
  * @description: 
  * 
 -->
-## minifier配置
+# minifier配置
 
 ```js
 const { log } = require('console');

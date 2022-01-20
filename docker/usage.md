@@ -1,33 +1,33 @@
-## CentOS Docker 安装
+# CentOS Docker 安装
 
 Docker支持64位CentOS7及以上版本系统.
 
-### 使用官方安装脚本自动安装
+## 使用官方安装脚本自动安装
 
 ```shell
 curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
 ```
 
-### 使用国内 daocloud 一键安装命令
+## 使用国内 daocloud 一键安装命令
 
 ```shell
 curl -sSL https://get.daocloud.io/docker | sh
 ```
 
-### 手动安装
+## 手动安装
 
-#### 卸载旧版本
+### 卸载旧版本
 较旧的 Docker 版本称为 docker 或 docker-engine 。如果已安装这些程序，请卸载它们以及相关的依赖项。
 
 ```shell
 yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine
 ```
 
-##### 使用 Docker 仓库进行安装
+#### 使用 Docker 仓库进行安装
 
 在新主机上首次安装 Docker Engine-Community 之前，需要设置 Docker 仓库。之后，您可以从仓库安装和更新 Docker。
 
-##### 设置仓库
+#### 设置仓库
 
 安装所需的软件包。yum-utils 提供了 yum-config-manager ，并且 device mapper 存储驱动程序需要 device-mapper-persistent-data 和 lvm2。
 
@@ -35,7 +35,7 @@ yum remove docker docker-client docker-client-latest docker-common docker-latest
 yum install -y yum-utils device-mapper-persistent-data lvm2
 ```
 
-##### 设置稳定的仓库
+#### 设置稳定的仓库
 
 1. 使用官方源地址（比较慢）
 ```shell
@@ -51,7 +51,7 @@ yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/d
 yum-config-manager --add-repo https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/centos/docker-ce.repo
 ```
 
-#### 安装 Docker Engine-Community
+### 安装 Docker Engine-Community
 安装最新版本的 Docker Engine-Community 和 containerd，或者转到下一步安装特定版本：
 
 ```shell
@@ -64,7 +64,7 @@ yum install docker-ce docker-ce-cli containerd.io
 
 Docker 安装完默认未启动。并且已经创建好 docker 用户组，但该用户组下没有用户。
 
-### 要安装特定版本的 Docker Engine-Community，请在存储库中列出可用版本，然后选择并安装：
+## 要安装特定版本的 Docker Engine-Community，请在存储库中列出可用版本，然后选择并安装：
 
 1. 列出并排序您存储库中可用的版本。此示例按版本号（从高到低）对结果进行排序。
 
@@ -80,16 +80,16 @@ yum list docker-ce --showduplicates | sort -r
 yum install docker-ce-<VERSION_STRING> docker-ce-cli-<VERSION_STRING> containerd.io
 ```
 
-### 启动 Docker
+# 启动 Docker
 
 ```shell
 systemctl start docker
 ```
 
 
-## Docker常用命令
+# Docker常用命令
 
-**pull**
+## pull
 
 从镜像仓库中拉取或者更新指定镜像，在未声明镜像标签时，默认标签为latest。
 
@@ -100,7 +100,7 @@ Options:
 	--disable-content-trust 跳过校验，默认开启
 ```
 
-**run**
+## run
 
 创建并启动一个容器
 
@@ -128,7 +128,7 @@ Options:
 	--privileged 给容器特权
 ```
 
-**build**
+## build
 
 通过 Dockerfile 构建镜像
 
@@ -146,7 +146,7 @@ Options:
 	-m, --message string 提交信息
 ```
 
-**cp**
+## cp
 
 在容器和宿主机之间拷贝文件
 
@@ -158,7 +158,7 @@ Options:
 	-a, --archive 保留文件权限
 ```
 
-**exec**
+## exec
 
 向正在运行的容器下发命令
 
@@ -173,7 +173,7 @@ Options:
 	-w, --workdir string 工作目录
 ```
 
-**export**
+## export
 
 将容器导出为一个tar包
 
@@ -183,7 +183,7 @@ Options:
 	-o, --output string tar包名称
 ```
 
-**images**
+## images
 
 列出镜像
 
@@ -209,7 +209,7 @@ Options:
 	-q, --quiet 只显示镜像ID
 ```
 
-**import**
+## import
 
 通过导入tar包的方式创建镜像
 
@@ -219,7 +219,7 @@ Options:
 	-m, --message string 设置提交信息
 ```
 
-**kill**
+## kill
 
 杀死一个或多个容器
 
@@ -227,7 +227,7 @@ Options:
 Usage: docker kill [OPTIONS] CONTAINER [CONTAINER...]
 ```
 
-**load**
+## load
 
 从tar包加载一个镜像
 
@@ -238,7 +238,7 @@ Options:
 	-q, --quiet 只显示ID
 ```
 
-**login**
+## login
 
 登录Docker镜像仓库
 
@@ -249,7 +249,7 @@ Options:
 	-u, --username string 账户
 ```
 
-**logout**
+## logout
 
 退出Docker镜像仓库
 
@@ -257,7 +257,7 @@ Options:
 Usage: docker logout [SERVER]
 ```
 
-**logs**
+## logs
 
 显示容器日志
 
@@ -270,7 +270,7 @@ Options:
 	-t, --timestamps 显示时间戳
 ```
 
-**ps**
+## ps
 
 列出容器
 
@@ -286,7 +286,7 @@ Options:
 	-s, --size 显示大小
 ```
 
-**push**
+## push
 
 将容器推送到镜像仓库
 
@@ -294,7 +294,7 @@ Options:
 Usage: docker push [OPTIONS] NAME[:TAG]
 ```
 
-**rename**
+## rename
 
 给容器重命名
 
@@ -302,7 +302,7 @@ Usage: docker push [OPTIONS] NAME[:TAG]
 Usage: docker rename CONTAINER NEW_NAME
 ```
 
-**restart**
+## restart
 
 重启一个或多个容器
 
@@ -310,7 +310,7 @@ Usage: docker rename CONTAINER NEW_NAME
 Usage: docker restart [OPTIONS] CONTAINER [CONTAINER...]
 ```
 
-**rm**
+## rm
 
 删除一个或多个容器
 
@@ -321,7 +321,7 @@ Options:
 	-v, --volumes 同时删除数据卷
 ```
 
-**rmi**
+## rmi
 
 删除一个或多个镜像
 
@@ -331,7 +331,7 @@ Options:
 	-f, --force 强制删除
 ```
 
-**save**
+## save
 
 将一个或多个镜像保存为tar包
 
@@ -341,7 +341,7 @@ Options:
 	-o, --output string tar包名称
 ```
 
-**search**
+## search
 
 查找镜像
 
@@ -349,7 +349,7 @@ Options:
 Usage: docker search [OPTIONS] TERM
 ```
 
-**start**
+## start
 
 启动一个或多个容器
 
@@ -357,7 +357,7 @@ Usage: docker search [OPTIONS] TERM
 Usage: docker start [OPTIONS] CONTAINER [CONTAINER...]
 ```
 
-**stats**
+## stats
 
 显示容器资源使用情况
 
@@ -367,7 +367,7 @@ Options:
 	-a, --all 显示所有容器，默认只显示正在运行的容器
 ```
 
-**stop**
+## stop
 
 停止一个或多个容器
 
@@ -375,7 +375,7 @@ Options:
 Usage: docker stop [OPTIONS] CONTAINER [CONTAINER...]
 ```
 
-**tag**
+## tag
 
 给镜像设置新的tag
 
@@ -383,7 +383,7 @@ Usage: docker stop [OPTIONS] CONTAINER [CONTAINER...]
 Usage: docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
 ```
 
-**inspect**
+## inspect
 
 获取容器或镜像的元数据
 
@@ -392,10 +392,10 @@ Usage: docker inspect [OPTIONS] NAME|ID [NAME|ID...]
 ```
 
 
-## Dockerfile
+# Dockerfile
 Dockerfile 是一个用来构建镜像的文本文件，文本内容包含了一条条构建镜像所需的指令和说明。
 
-**ARG**
+## ARG
 
 设置参数，该参数值可以从 --build-arg <varname>=<value> 接收值.
 
@@ -407,7 +407,7 @@ ARG <name>[=<default value>]
 例：ARG version="1.0.0"
 ```
 
-**FROM**
+## FROM
 
 指定基础镜像，FROM必须为Dockerfile非注释行的第一行。
 
@@ -419,7 +419,7 @@ FROM <image>@<digest>
 例：FROM ubuntu:14.04
 ```
 
-**LABEL**
+## LABEL
 
 设置镜像标签
 
@@ -429,7 +429,7 @@ LABEL <key>=<value> <key>=<value> <key>=<value> ...
 例：LABEL maintainer="demo@demo.com"
 ```
 
-**ENV**
+## ENV
 
 设置环境变量
 
@@ -446,7 +446,7 @@ ENV <key>=<value> ... 该方法一次可以设置多个环境变量
 例：ENV JAVA_HOME=/home/jdk-8
 ```
 
-**ADD**
+## ADD
 
 添加文件，将宿主机的文件添加到容器中。
 
@@ -457,7 +457,7 @@ ADD [--chown=<user>:<group>] ["<src>",... "<dest>"]
 例：ADD ${WORKSPACE}/target /usr/local/tomcat/webapps/ROOT
 ```
 
-**COPY**
+## COPY
 
 添加文件，将宿主机的文件添加到容器中。
 
@@ -467,7 +467,7 @@ COPY [--chown=<user>:<group>] <src>... <dest>
 COPY [--chown=<user>:<group>] ["<src>",... "<dest>"]
 ```
 
-**USER**
+## USER
 
 指定运行容器的用户
 
@@ -478,7 +478,7 @@ USER <UID>[:<GID>]
 例：USER root
 ```
 
-**WORKDIR**
+## WORKDIR
 
 工作目录，进入容器后，以 WORKDIR 为当前路径
 
@@ -488,7 +488,7 @@ WORKDIR /workdir
 例：WORKDIR /home
 ```
 
-**EXPOSE**
+## EXPOSE
 
 说明容器暴露的端口，默认协议为 tcp ，若是 udp 协议，则需要在后面添加 udp ，如 80/udp
 
@@ -498,7 +498,7 @@ EXPOSE <port> [<port>/<protocol>...]
 例：EXPOSE 8080，表明容器在运行时提供8080端口，在启动该容器时需端口映射。
 ```
 
-**VOLUME**
+## VOLUME
 
 设置挂载点，将容器内的路径挂载到宿主机，该挂载方式是将容器内的路径挂载到docker数据路径下
 
@@ -508,7 +508,7 @@ VOLUME <url>
 例：VOLUME /var/log
 ```
 
-**RUN**
+## RUN
 
 执行命令并创建新的镜像层，通常用于更新或安装软件。
 
@@ -519,7 +519,7 @@ RUN ["executable", "param1", "param2"]
 例：RUN yum -y install git
 ```
 
-**CMD**
+## CMD
 
 设置容器启动后默认执行的命令，CMD命令会被docker run的参数覆盖。
 
@@ -530,7 +530,7 @@ CMD ["executable","param1","param2"]
 例：CMD systemclt start docker.service //启动容器时启动docker服务
 ```
 
-**ENTRYPOINT**
+## ENTRYPOINT
 
 和CMD一样，设置容器启动后默认执行的命令，但是该命令不会被docker run覆盖，会始终执行，CMD会被docker run传入的命令覆盖。
 
@@ -541,7 +541,7 @@ ENTRYPOINT ["executable", "param1", "param2"]
 例：ENTRYPOINT /usr/local/apache-tomcat-8.5.33/bin/startup.sh
 ```
 
-#### Demo
+### Dockerfile Demo
 
 ```markdown
 FROM tomcat:9.0
@@ -552,11 +552,11 @@ ENTRYPOINT /opt/apache-tomcat-9.0.12/bin/startup.sh && tail -f /opt/apache- tomc
 ```
 
 
-## docker-compose
+# docker-compose
 
 docker-compose 是docker的原生编排技术，你可以定义一个或多个应用在 docker-compose.yaml 里面，然后使用 docker-compose 命令行来启动你的应用。
 
-### 安装
+## 安装
 
 使用以下命令安装指定版本的 docker-compose ，若下载太慢，可通过浏览器手动下载指定版本后添加到系统环境变量中。
 
@@ -570,7 +570,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 ```
 
 
-### 命令
+## 命令
 
 ```markdown
 Usage:
@@ -581,7 +581,7 @@ Options:
 	-p, --project-name NAME 指定项目名称
 ```
 
-**config**
+## config
 
 验证 docker-compose.yaml 文件编写是否正确
 
@@ -594,7 +594,7 @@ Options:
 特别地：这个命令不能指定yaml文件，默认为docker-compose.yaml或docker-compose.yml
 ```
 
-**down**
+## down
 
 停止容器并且删除容器，网络，数据卷，镜像
 
@@ -608,7 +608,7 @@ Options:
 	--remove-orphans 删除未定义在docker-compose.yaml里面的容器
 ```
 
-**pull**
+## pull
 
 拉取 docker-compose.yaml 里面定义的镜像
 
@@ -622,7 +622,7 @@ Options:
 	--include-deps 拉取依赖项
 ```
 
-**restart**
+## restart
 
 重启一个或多个service
 
@@ -630,7 +630,7 @@ Options:
 Usage: restart [options] [SERVICE...]
 ```
 
-**start**
+## start
 
 启动service
 
@@ -638,7 +638,7 @@ Usage: restart [options] [SERVICE...]
 Usage: start [SERVICE...]
 ```
 
-**stop**
+## stop
 
 停止service
 
@@ -646,7 +646,7 @@ Usage: start [SERVICE...]
 Usage: stop [options] [SERVICE...]
 ```
 
-**up**
+## up
 
 构建，创建，启动某个service的容器
 

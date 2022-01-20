@@ -6,9 +6,9 @@
  * @description: 
  * 
 -->
-## nodejs环境配置
+# nodejs环境配置
 
-### 方式一：使用NVM安装多个Node.js版本
+## 方式一：使用NVM安装多个Node.js版本
 
 NVM（Node Version Manager）是Node.js的版本管理软件，使您可以轻松在Node.js各个版本间进行切换。适用于长期做node开发的人员或有快速更新node版本、快速切换node版本的场景。具体操作步骤如下：
 
@@ -38,7 +38,7 @@ echo ". /usr/local/nvm/nvm.sh" >> /etc/profile
 source /etc/profile
 ```
 
-#### nvm使用
+### nvm使用
 
 1. 安装Node.js版本
 
@@ -57,7 +57,7 @@ nvm list
 nvm use 6.9.5
 ```
 
-### 方式二：使用二进制文件安装
+## 方式二：使用二进制文件安装
 
 该方式使用的安装包是已编译好的二进制文件。解压文件之后，在bin文件夹中就已存在node和npm，无需重复编译。以安装Node.js v6.9.5版本为例，具体操作说明如下：
 
@@ -89,7 +89,7 @@ npm -v
 
 能够正常显示版本号，说明nodejs环境已安装完毕。软件默认安装在/root/node-v6.9.5-linux-x64/目录下。
 
-#### 如果您需要将该软件安装到其他目录下，例如：/opt/node/，可以如下操作：
+### 如果您需要将该软件安装到其他目录下，例如：/opt/node/，可以如下操作：
 
 1. 创建/opt/node/路径
 

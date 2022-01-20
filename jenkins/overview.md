@@ -1,4 +1,4 @@
-## 什么是jenkins
+# 什么是jenkins
 
 Jenkins前身是Hudson，使用java语言开发的自动化发布工具。在中大型金融等企业中普遍使用Jenkins来作为项目发布工具。Jenkins官方提供的插件使Jenkins更为强大。
 
@@ -10,7 +10,7 @@ Jenkins 支持各种运行方式，可通过系统包、Docker 或者通过一�
 
 [https://www.jenkins.io/zh/](https://www.jenkins.io/zh/)
 
-## 特点
+# 特点
 
 1. 开源免费
 
@@ -24,7 +24,7 @@ Jenkins 支持各种运行方式，可通过系统包、Docker 或者通过一�
 
 6. 插件资源丰富
 
-## 历史背景
+# 历史背景
 
 Jenkins的前身是Hudson，采用JAVA编写的持续集成开源工具。Hudson由Sun公司在2004年启动，第一个版本于2005年在java.net发布。2007年开始Hudson逐渐取代CruiseControl和其他的开源构建工具的江湖地位。在2008年的JavaOne大会上在开发者解决方案中获得杜克选择大奖（Duke's Choice Award）。
 

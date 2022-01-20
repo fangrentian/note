@@ -6,9 +6,7 @@
  * @description: 
  * 
 -->
-## 浏览器使用camera
-
-### 声明Camera类, 扩展相关方法
+# 声明Camera类, 扩展相关方法
 
 ```js
 function Camera(canvasDom, videoDom) {
@@ -97,7 +95,7 @@ Camera.prototype.dataURLtoFile = function (dataUrl) {
 };
 ```
 
-### 使用方法
+# 使用方法
 
 在html页面中需要准备 **video** 和 **canvas** 及操作按钮
 

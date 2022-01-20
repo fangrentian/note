@@ -1,4 +1,4 @@
-## Linux 简介
+# Linux 简介
 
 Linux 内核最初只是由芬兰人林纳斯·托瓦兹（Linus Torvalds）在赫尔辛基大学上学时出于个人爱好而编写的。
 
@@ -16,7 +16,7 @@ Linux存在着许多不同的Linux版本，但它们都使用了Linux内核。Li
 
 [https://www.w3cschool.cn/linux/dict](https://www.w3cschool.cn/linux/dict)
 
-## Linux 的发行版
+# Linux 的发行版
 
 Linux 的发行版说简单点就是将 Linux 内核与应用软件做一个打包。
 
@@ -26,7 +26,7 @@ Linux 的发行版说简单点就是将 Linux 内核与应用软件做一个打�
 
 ![](./images/wKioL1bvVPWAu7hqAAEyirVUn3c446.jpg-wh_651x-s_3197843091.jpg)
 
-## Linux 应用领域
+# Linux 应用领域
 
 今天各种场合都有使用各种 Linux 发行版，从嵌入式设备到超级计算机，并且在服务器领域确定了地位，通常服务器使用 LAMP（Linux + Apache + MySQL + PHP）或 LNMP（Linux + Nginx+ MySQL + PHP）组合。
 
@@ -40,7 +40,7 @@ Linux 的发行版说简单点就是将 Linux 内核与应用软件做一个打�
 * 葡萄牙同样使用自己的 Linux 发布版 Caixa Mágica，用于 Magalh?es 笔记本电脑和 e-escola 政府软件。
 * 法国和德国同样开始逐步采用 Linux。
 
-## Linux vs Windows
+# Linux vs Windows
 
 目前国内 Linux 更多的是应用于服务器上，而桌面操作系统更多使用的是 Windows。主要区别如下
 
@@ -54,7 +54,7 @@ Linux 的发行版说简单点就是将 Linux 内核与应用软件做一个打�
 | 软件     | 每一种特定功能可能都需要商业软件的支持，需要购买相应的授权。                                                                                                                                                                                                          | 大部分软件都可以自由获取，同样功能的软件选择较少。                                                                                                                                                                                                                                                                                                            |
 
 
-## 历史背景
+# 历史背景
 
 众所周知，linux内核是林纳斯·托瓦兹（Linus Torvalds）最先设计的。在1988年，托瓦兹进入了赫尔辛基大学，选读了计算机科学系。在学校期间，因为学业的需要与自己的兴趣，接触到了unix这个操作系统。当时整个赫尔辛基只有一部最新的UNIX系统,但是仍然很难满足托瓦兹的需求。为此,他就想到自己写一个类unix操作系统。不久之后，托瓦兹又了解到，谭宁邦教授为了教育需要而编写的Minix系统。让自己的想法更加坚定。
 
@@ -76,7 +76,7 @@ Linux 的发行版说简单点就是将 Linux 内核与应用软件做一个打�
 
 1996年6月，Linux 2.0内核发布，此内核有大约40万行代码，并可以支持多个处理器。此时的Linux 已经进入了实用阶段，全球大约有350万人使用。
 
-## Linux开枝散叶
+# Linux开枝散叶
 
 因为linux加入了gnu计划，所以，任何人均可取得源码和可执行这个内核程序，并且可以修改。并且由于GNU的GPL授权并非不能从事商业行为，因此很多商业公司和团队便专门来开发自己的linux distribution。比较出名的有Red Hat，SuSE,Ubuntu,Fedora,Debian,CentOS等。
 

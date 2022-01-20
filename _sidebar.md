@@ -1,52 +1,72 @@
+* Cordova
+  * [概述](/cordova/overview.md)
+  * [使用](/cordova/usage.md)
+* CSS
+  * [概述](/css/overview.md)
+  * [知识碎片](/css/piecesOfKnowledge.md)
+  * [css hack](/css/cssHack.md)
+  * [弹性盒模型](/css/flex.md)
+  * [CSS动画](/css/animate.md)
+* Docker
+  * [概述](/docker/overview.md)
+  * [使用](/docker/usage.md)
+  * [容器安装](/docker/container.md)
+  * [异常情况](/docker/error.md)
+* ExpressJS
+  * [概述](/express/overview.md)
+  * [使用](/express/usage.md)
 * HTML
   * [概述](/html/overview.md)
   * [meta标签特殊属性](/html/meta.md)
-* CSS
-  * [概述](/css/overview.md)
+  * [知识碎片](/html/piecesOfKnowledge.md)
 * Javascript
   * [概述](/javascript/overview.md)
-  * Camera
-    * [浏览器使用camera](/javascript/camera/web-camera.md)
-  * Layui
-    * [概述](/javascript/layui/overview.md)
-    * [layui使用](/javascript/layui/layui.md)
+  * [知识碎片](/javascript/piecesOfKnowledge.md)
+  * [代码片段](/javascript/codeSnippets.md)
+  * [Es6代码片段](/javascript/codeSnippetsEs6.md)
+  * [浏览器使用camera](/javascript/web-camera.md)
+  * [layui使用](/javascript/layui.md)
   * 前端普通项目打包
     * [package配置](/javascript/build/package.md)
     * [gulp打包](/javascript/build/gulpfile.md)
     * [minifier打包](/javascript/build/minifier.md)
-* NodeJS
-  * [概述](/nodejs/overview.md)
-* ExpressJS
-  * [概述](/express/overview.md)
-* ThinkJS
-  * [概述](/thinkjs/overview.md)
-* Scss
-  * [概述](/scss/overview.md)
-* Vue
-  * [概述](/vue/overview.md)
-  * 打包
-    * [打包异常](/vue/build/error.md)
-* Cordova
-  * [概述](/cordova/overview.md)
-* SpringBoot
-  * [概述](/springboot/overview.md)
-* React
-  * [概述](/react/overview.md)
-* ReactNative
-  * [概述](/reactNative/overview.md)
-* VirtualBox
-  * [概述](/virtualBox/overview.md)
-  * 配置
-    * [网络环境](/virtualbox/config/network.md)
-    * [java环境](/virtualbox/config/java.md)
-    * [maven环境](/virtualbox/config/maven.md)
-    * [nodejs环境](/virtualbox/config/nodejs.md)
-    * [docker环境](/virtualbox/config/docker.md)
-* Linux
-  * [概述](/linux/overview.md)
 * Jenkins
   * [概述](/jenkins/overview.md)
   * [配置](jenkins/config.md)
-* Docker
-  * [概述](/docker/overview.md)
-  * [容器安装](/docker/container.md)
+  * [使用](jenkins/usage.md)
+* Linux
+  * [概述](/linux/overview.md)
+  * [使用](/linux/usage.md)
+* NodeJS
+  * [概述](/nodejs/overview.md)
+  * [使用](/nodejs/usage.md)
+  * [npm](/nodejs/npm.md)
+  * [npx](/nodejs/npx.md)
+  * [nvm](/nodejs/nvm.md)
+  * [yarn](/nodejs/yarn.md)
+* React
+  * [概述](/react/overview.md)
+  * [使用](/react/usage.md)
+* ReactNative
+  * [概述](/reactNative/overview.md)
+  * [使用](/reactNative/usage.md)
+* Scss
+  * [概述](/scss/overview.md)
+  * [使用](/scss/usage.md)
+* SpringBoot
+  * [概述](/springboot/overview.md)
+  * [使用](/springboot/usage.md)
+* ThinkJS
+  * [概述](/thinkjs/overview.md)
+  * [使用](/thinkjs/usage.md)
+* VirtualBox
+  * [概述](/virtualBox/overview.md)
+  * [网络环境](/virtualbox/network.md)
+  * [java环境](/virtualbox/java.md)
+  * [maven环境](/virtualbox/maven.md)
+  * [nodejs环境](/virtualbox/nodejs.md)
+  * [docker环境](/virtualbox/docker.md)
+* Vue
+  * [概述](/vue/overview.md)
+  * [使用](/vue/usage.md)
+  * [异常情况](/vue/error.md)

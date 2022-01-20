@@ -1,6 +1,6 @@
-## `<meta>`标签特殊属性
+# `<meta>`标签特殊属性
 
-### `<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">`
+## `<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">`
 
 X-UA-Compatible是自从IE8新加的一个设置，对于IE8以下的浏览器是不识别的. 通过在meta中设置X-UA-Compatible的值，可以指定网页的兼容性模式设置.
 
@@ -61,13 +61,13 @@ Google Chrome Frame，谷歌浏览器内嵌框架（简称GCF），是一个使�
 
 **参考资料**
 
-* 官方开发者文档：http://www.chromium.org/developers/how-tos/chrome-frame-getting-started
+[官方开发者文档](http://www.chromium.org/developers/how-tos/chrome-frame-getting-started)
 
-* html5rocks的补充介绍：http://www.html5rocks.com/en/tutorials/google-chrome-frame
+[html5rocks的补充介绍](http://www.html5rocks.com/en/tutorials/google-chrome-frame)
 
-* Chrome与GCF的渲染差异：http://www.chromium.org/developers/how-tos/chrome-frame-getting-started/differences-between-chrome-and-chrome-frame
+[Chrome与GCF的渲染差异](http://www.chromium.org/developers/how-tos/chrome-frame-getting-started/differences-between-chrome-and-chrome-frame)
 
-### `<meta charset="utf-8">`
+## `<meta charset="utf-8">`
 
 用来设置网页的字符集, 国内常见字符集: **utf-8**, **gb2312**, **gbk**, 其中**gb2312**和**gbk**是国标，只包含汉字，只在国内使用，打开页面的速度快于使用utf-8的页面. 其它一些字符集:
 
@@ -89,15 +89,15 @@ Google Chrome Frame，谷歌浏览器内嵌框架（简称GCF），是一个使�
 
 * 浏览器的字符集设置错误
 
-### `<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">`
+## `<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">`
 
-#### viewport的概念
+### viewport的概念
 
 通俗的讲，移动设备上的viewport就是设备的屏幕上能用来显示我们的网页的那一块区域，在具体一点，就是浏览器上(也可能是一个app中的webview)用来显示网页的那部分区域，但viewport又不局限于浏览器可视区域的大小，它可能比浏览器的可视区域要大，也可能比浏览器的可视区域要小. 在默认情况下，一般来讲，移动设备上的viewport都是要大于浏览器可视区域的，这是因为考虑到移动设备的分辨率相对于桌面电脑来说都比较小，所以为了能在移动设备上正常显示那些传统的为桌面浏览器设计的网站，移动设备上的浏览器都会把自己默认的viewport设为980px或1024px（也可能是其它值，这个是由设备自己决定的），但带来的后果就是浏览器会出现横向滚动条，因为浏览器可视区域的宽度是比这个默认的viewport的宽度要小的. 下图列出了一些设备上浏览器的默认viewport的宽度.
 
 ![](./images/300958470402077.png)
 
-#### css中的1px并不等于设备的1px
+### css中的1px并不等于设备的1px
 
 在css中我们一般使用px作为单位，在桌面浏览器中css的1个像素往往都是对应着电脑屏幕的1个物理像素，这可能会造成我们的一个错觉，那就是css中的像素就是设备的物理像素. 但实际情况却并非如此，css中的像素只是一个抽象的单位，在不同的设备或不同的环境中，css中的1px所代表的设备物理像素是不同的. 在为桌面浏览器设计的网页中，我们无需对这个津津计较，但在移动设备上，必须弄明白这点. 在早先的移动设备中，屏幕像素密度都比较低，如iphone3，它的分辨率为320x480，在iphone3上，一个css像素确实是等于一个屏幕物理像素的. 后来随着技术的发展，移动设备的屏幕像素密度越来越高，从iphone4开始，苹果公司便推出了所谓的Retina屏，分辨率提高了一倍，变成640x960，但屏幕尺寸却没变化，这就意味着同样大小的屏幕上，像素却多了一倍，这时，一个css像素是等于两个物理像素的. 其他品牌的移动设备也是这个道理. 例如安卓设备根据屏幕像素密度可分为ldpi、mdpi、hdpi、xhdpi等不同的等级，分辨率也是五花八门，安卓设备上的一个css像素相当于多少个屏幕物理像素，也因设备的不同而不同，没有一个定论.
 
@@ -108,7 +108,7 @@ devicePixelRatio的测试结果：
 
 ![](./images/300958489622990.png)
 
-#### PPK的关于三个viewport的理论
+### PPK的关于三个viewport的理论
 
 [ppk大神](http://www.quirksmode.org/)对于移动设备上的viewport有着非常多的研究（[第一篇](http://www.quirksmode.org/mobile/viewports.html)，[第二篇](http://www.quirksmode.org/mobile/viewports2.html)，[第三篇](http://www.quirksmode.org/mobile/metaviewport/)），有兴趣的同学可以去看一下，本文中有很多数据和观点也是出自那里. ppk认为，移动设备上有三个viewport.
 
@@ -129,7 +129,7 @@ devicePixelRatio的测试结果：
 
 再总结一下：ppk把移动设备上的viewport分为**layout viewport**  、 **visual viewport**和 **ideal viewport**  三类，其中的ideal viewport是最适合移动设备的viewport，ideal viewport的宽度等于移动设备的屏幕宽度，只要在css中把某一元素的宽度设为ideal viewport的宽度(单位用px)，那么这个元素的宽度就是设备屏幕的宽度了，也就是宽度为100%的效果. ideal viewport 的意义在于，无论在何种分辨率的屏幕下，那些针对ideal viewport 而设计的网站，不需要用户手动缩放，也不需要出现横向滚动条，都可以完美的呈现给用户.
 
-#### 利用meta标签对viewport进行控制
+### 利用meta标签对viewport进行控制
 
 移动设备默认的viewport是**layout viewport**，也就是那个比屏幕要宽的viewport，但在进行移动设备网站的开发时，我们需要的是**ideal viewport**. 那么怎么才能得到ideal viewport呢？这就该轮到meta标签出场了.
 我们在开发移动设备的网站时，最常见的的一个动作就是把下面这个东西复制到我们的head标签中：
@@ -167,7 +167,7 @@ meta viewport 标签首先是由苹果公司在其safari浏览器中引入的，
 
 因为这个属性只有安卓支持，并且安卓已经决定要废弃~target-densitydpi~  这个属性了，所以这个属性我们要避免进行使用  .
 
-#### 把当前的viewport宽度设置为 ideal viewport 的宽度
+### 把当前的viewport宽度设置为 ideal viewport 的宽度
 
 要得到ideal viewport就必须把默认的layout viewport的宽度设为移动设备的屏幕宽度. 因为meta viewport中的width能控制layout viewport的宽度，所以我们只需要把width设为device-width这个特殊的值就行了.
 
@@ -213,9 +213,9 @@ width=400表示把当前viewport的宽度设为400px，initial-scale=1则表示�
 <meta name="viewport" content="width=device-width, initial-scale=1">
 ```
 
-#### 关于meta viewport的更多知识
+### 关于meta viewport的更多知识
 
-##### 关于缩放以及initial-scale的默认值
+#### 关于缩放以及initial-scale的默认值
 
 首先我们先来讨论一下缩放的问题，前面已经提到过，缩放是相对于ideal viewport来缩放的，缩放值越大，当前viewport的宽度就会越小，反之亦然. 例如在iphone中，ideal viewport的宽度是320px，如果我们设置 initial-scale=2 ，此时viewport的宽度会变为只有160px了，这也好理解，放大了一倍嘛，就是原来1px的东西变成2px了，但是1px变为2px并不是把原来的320px变为640px了，而是在实际宽度不变的情况下，1px变得跟原来的2px的长度一样了，所以放大2倍后原来需要320px才能填满的宽度现在只需要160px就做到了. 因此，我们可以得出一个公式：
 
@@ -239,7 +239,7 @@ ps: visual viewport的宽度指的是浏览器可视区域的宽度.
 
 ![](./images/300959005874738.png)    ![](./images/300959024307908.png)     ![](./images/300959031187064.png)
 
-##### 动态改变meta viewport标签
+#### 动态改变meta viewport标签
 
 第一种方法
 
@@ -279,7 +279,7 @@ alert(document.documentElement.clientWidth); //弹出320，正常情况应该弹
 
 测试的手机ideal viewport 宽度为320px，第一次弹出的值是600,但这个值应该是第行meta标签的结果啊，然后第二次弹出的值是320，这才是第一行meta标签所达到的效果啊，所以在安卓2.3(或许是所有2.x版本中)的自带浏览器中，对meta viewport标签进行覆盖或更改，会出现让人非常迷糊的结果.
 
-#### 结语
+### 结语
 
 说了那么多废话，最后还是有必要总结一点有用的出来.
 

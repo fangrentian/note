@@ -6,21 +6,21 @@
  * @description: 
  * 
 -->
-## maven环境配置
+# maven环境配置
 
-### 下载maven
+## 下载maven
 
 ```shell
 wget https://mirrors.tuna.tsinghua.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
 ```
 
-### 解压maven
+## 解压maven
 
 ```shell
 tar -zxvf apache-maven-3.6.3-bin.tar.gz -C /usr/local/maven/
 ```
 
-### 修改profile
+## 修改profile
 
 在/etc/profile中添加以下配置
 

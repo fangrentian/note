@@ -6,8 +6,8 @@
  * @description: 
  * 
 -->
-## 异常1 
-### Cannot read property 'name' of nullat Array.forEach (<anonymous>)
+# 异常1 
+## Cannot read property 'name' of nullat Array.forEach (<anonymous>)
 
 一个用yarn workspaces控制的vue项目,单独copy出来后, **yarn build** 时报错, 怪异的地方是, 项目原来开发环境,正式环境都没报错,
 移植出来后,开发环境OK, 打包时就报错, 报错信息如下: 

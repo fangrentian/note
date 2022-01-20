@@ -1,4 +1,4 @@
-## 什么是thinkjs
+# 什么是thinkjs
 
 ThinkJS 是一款面向未来开发的 Node.js 框架，整合了大量的项目最佳实践，让企业级开发变得更简单、高效。从 3.0 开始，框架底层基于 Koa 2.x 实现，兼容 Koa 的所有功能。
 
@@ -6,7 +6,7 @@ ThinkJS 是一款面向未来开发的 Node.js 框架，整合了大量的项目
 
 [https://thinkjs.org/zh-cn/doc/index.html](https://thinkjs.org/zh-cn/doc/index.html)
 
-## 特性
+# 特性
 
 * 基于 Koa 2.x，兼容 middleware
 
@@ -20,6 +20,6 @@ ThinkJS 是一款面向未来开发的 Node.js 框架，整合了大量的项目
 
 * 从 3.2 开始支持 TypeScript
 
-## 架构
+# 架构
 
 ![](./images/t0127dc46905fdcef9c.jpg)

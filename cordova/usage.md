@@ -1,8 +1,8 @@
-## cordova打包安卓apk
+# cordova打包安卓apk
 
 !安卓环境自行安装配置.
 
-### 安装全局cordova工具
+## 安装全局cordova工具
 
 **安装cordova**
 ```shell
@@ -17,7 +17,7 @@ cordova -v
 
 ![](./images/20220118093706.png)
 
-### 创建cordova工程
+## 创建cordova工程
 
 **创建工程**
 ```shell
@@ -27,7 +27,7 @@ cordova create democordova
 
 ![](./images/20220118094128.png)
 
-### 添加平台
+## 添加平台
 
 **添加安卓平台**
 ```shell
@@ -35,7 +35,7 @@ cordova platform add android
 ```
 ![](./images/20220118094659.png)
 
-### 运行一下试试
+## 运行一下试试
 
 将准备好的web项目拷贝到项目的 **www** 目录, 然后执行以下命令
 
@@ -43,7 +43,7 @@ cordova platform add android
 cordova run android
 ```
 
-#### 运行时可能遇到的问题
+### 运行时可能遇到的问题
 
 1. no installed build tools found. install the android build tools version 19.1.0 or higher
 
@@ -61,7 +61,7 @@ cordova run android
 
 成功运行后, 就已经产生了debug版本的apk文件(platforms/android/app/build/outputs/apk/debug/app-debug.apk)
 
-### 打包apk
+## 打包apk
 
 ```shell
 cordova build android --release

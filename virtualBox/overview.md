@@ -1,15 +1,15 @@
-## 什么是virtualBox
+# 什么是virtualBox
 
 VirtualBox 是一款开源虚拟机软件。VirtualBox 是由德国 Innotek 公司开发，由Sun Microsystems公司出品的软件，使用Qt编写，在 Sun 被 Oracle 收购后正式更名成 Oracle VM VirtualBox。Innotek 以 GNU General Public License (GPL) 释出 VirtualBox，并提供二进制版本及 OSE 版本的代码。使用者可以在VirtualBox上安装并且执行Solaris、Windows、DOS、Linux、OS/2 Warp、BSD等系统作为客户端操作系统。已由甲骨文公司进行开发，是甲骨文公司xVM虚拟化平台技术的一部分。
 
 VirtualBox号称是最强的免费虚拟机软件，它不仅具有丰富的特色，而且性能也很优异。它简单易用，可虚拟的系统包括Windows（从Windows 3.1到Windows 10、Windows Server 2012，所有的Windows系统都支持）、Mac OS X、Linux、OpenBSD、Solaris、IBM OS2甚至Android等操作系统。使用者可以在VirtualBox上安装并且运行上述的这些操作系统。 与同性质的VMware及Virtual PC比较下，VirtualBox独到之处包括远端桌面协定（RDP）、iSCSI及USB的支持，VirtualBox在客户端操作系统上已可以支持USB 3.0的硬件装置，不过要安装 VirtualBox Extension Pack。
 
 
-## 历史背景
+# 历史背景
 
 VirtualBox最初是以专有软件协议的方式提供。2007年1月，InnoTek以GNU通用公共许可证（GPL）发布VirtualBox而成为自由软件，并提供二进制版本及开放源代码版本的代码。 而在2008年2月，InnoTek软件公司由太阳微系统公司所并购。 在2010年1月，甲骨文公司完成对太阳微系统公司的收购。
 
-## 主要特点
+# 主要特点
 
 * 支持64位客户端操作系统，即使主机使用32位CPU
 
@@ -35,13 +35,13 @@ VirtualBox最初是以专有软件协议的方式提供。2007年1月，InnoTek�
 
 * USB与USB2.0支持
 
-## 安装
+# 安装
 
 在VirtualBox网站下载主机操作系统对应的二进制文件。VirtualBox可以安装在32位和64位操作系统上。在32位主机操作系统上运行64位的虚拟机是可以的，但必须在主机的BIOS中启用硬件虚拟化特性。
 
 运行二进制安装文件将开启一个简单的安装向导，允许用户定制VirtualBox特性，选择任意快捷方式并指定安装目录。USB设备驱动以及VirtualBox host-only网络适配器将一起安装。
 
-## 创建虚拟机
+# 创建虚拟机
 
 在VirtualBox中创建虚拟机相当简单，很多设置可以按照用户个人的喜好进行配置。一旦安装了客户操作系统并选择了资源和网卡设置，就可以尝试在小环境或开发环境中使用VirtualBox了。
 总体来说，在VirtualBox中创建虚拟机分三步：
@@ -62,12 +62,12 @@ VirtualBox最初是以专有软件协议的方式提供。2007年1月，InnoTek�
 
    最后配置虚拟网卡。VirtualBox允许在一个虚拟机上配置至多四块虚拟网卡。默认的是AMD PCnet-FAST III，大多数操作系统都支持AMD PCnet-FAST III。也可以选择AMD PCnet-PCI II和Intel PRO-1000系列的网卡，以及支持直接存取主机网卡的准虚拟化网卡。
 
-## 模拟环境
+# 模拟环境
 
-### 软件模拟
+## 软件模拟
 能够安装多个客户端操作系统，每个客户端系统皆可独立开启、暂停与停止。主端操作系统与客户端操作系统皆能相互通讯，多个操作系统同时运行的环境，也彼此能够同时使用网络。
 
-### 硬件模拟
+## 硬件模拟
 * VirtualBox支持Intel VT-x与AMD AMD-V硬件虚拟化技术。
 
 * 硬盘被模拟在一个称为虚拟磁盘映像档（Virtual Disk Images）的特殊容器，此格式不相容于其它虚拟机平台运行，通常作为一个系统档存放在主机端操作系统（副档名.vdi)。VirtualBox能够连结iSCSI，且能在虚拟硬盘上运作，此外VirtualBox可以读写VMware VMDK档与VirtualPC VHD档。
@@ -80,9 +80,9 @@ VirtualBox最初是以专有软件协议的方式提供。2007年1月，InnoTek�
 
 * 在以太网接口卡方面，VirtualBox虚拟了数张网络卡：AMD PCnet PCI II、AMD PCnet-Fast III、Intel Pro/1000 MT Desktop、Intel Pro/1000 MT Server、Intel Pro/1000 T Server。
 
-## 网络设置
+# 网络设置
 
-### VirtualBox提供了多种网络接入模式，他们各有优缺点，用户可以根据自己的需要进行选择:
+## VirtualBox提供了多种网络接入模式，他们各有优缺点，用户可以根据自己的需要进行选择:
 
 1. NAT模式：最简单的实现虚拟机上网的方式，无需配置，默认选择即可接入网络。虚拟机访问网络的所有数据都是由主机提供的，访问速度较慢，和主机之间不能互相访问。
 
@@ -92,7 +92,7 @@ VirtualBox最初是以专有软件协议的方式提供。2007年1月，InnoTek�
 
 4. Host-only Adapter模式：即主机模式，是所有接入模式中最复杂的一种，需要有比较扎实的网络基础知识才行。前面几种模式所实现的功能，通过虚拟机及网卡的设置都可以被实现。
 
-### 虚拟机参数
+## 虚拟机参数
 
 1. 虚拟机名称和系统类型：为将要创建的虚拟机命名，要求是唯一的标识，用来区分该虚拟机硬件配置、操作系统、软件等数据。并选择将要安装的操作系统类型和版本，以便VirtualBox自动配置合适的硬件环境；
 

@@ -6,7 +6,7 @@
  * @description: 
  * 
 -->
-## gulpfile配置
+# gulpfile配置
 
 ```js
 const { task, series, parallel, watch, src, dest } = require("gulp");
