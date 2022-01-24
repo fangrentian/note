@@ -25,7 +25,6 @@
   * [概述](/javascript/overview.md)
   * [知识碎片](/javascript/piecesOfKnowledge.md)
   * [代码片段](/javascript/codeSnippets.md)
-  * [Es6代码片段](/javascript/codeSnippetsEs6.md)
   * [排序](/javascript/sort.md)
   * [单页面H5路由](/javascript/spaH5Router.md)
   * [浏览器使用camera](/javascript/web-camera.md)
@@ -41,7 +40,6 @@
   * [使用](jenkins/usage.md)
 * Linux
   * [概述](/linux/overview.md)
-  * [使用](/linux/usage.md)
 * NodeJS
   * [概述](/nodejs/overview.md)
   * [使用](/nodejs/usage.md)
@@ -73,7 +71,6 @@
   * [使用](/reactNative/usage.md)
 * Scss
   * [概述](/scss/overview.md)
-  * [使用](/scss/usage.md)
 * SpringBoot
   * [概述](/springboot/overview.md)
   * [使用](/springboot/usage.md)
