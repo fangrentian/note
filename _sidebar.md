@@ -26,8 +26,11 @@
   * [知识碎片](/javascript/piecesOfKnowledge.md)
   * [代码片段](/javascript/codeSnippets.md)
   * [Es6代码片段](/javascript/codeSnippetsEs6.md)
+  * [排序](/javascript/sort.md)
+  * [单页面H5路由](/javascript/spaH5Router.md)
   * [浏览器使用camera](/javascript/web-camera.md)
   * [layui使用](/javascript/layui.md)
+  * [mqtt客户端](/javascript/mqttClient.md)
   * 前端普通项目打包
     * [package配置](/javascript/build/package.md)
     * [gulp打包](/javascript/build/gulpfile.md)
