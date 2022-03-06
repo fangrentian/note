@@ -208,7 +208,7 @@ c.queue({
 
 如果你想修改一些默认值，可以在构造 Crawler() 的时候配置相关的参数，此时的参数将在全局范围内生效。如果你只想对单个请求配置独立的参数，你可以在调用 queue() 函数时覆盖参数。
 
-Crawler 使用了 request 库，所以 Crawler 可供配置的参数列表是 request 库的参数列表的超集，即 request 库中所有的配置在 Crawler 中均适用。
+Crawler 使用了 [request库](https://github.com/mikeal/request#requestoptions-callback) ，所以 Crawler 可供配置的参数列表是 request 库的参数列表的超集，即 request 库中所有的配置在 Crawler 中均适用。
 
 ## 基本请求参数
 
