@@ -12,6 +12,8 @@
   * [使用](/docker/usage.md)
   * [容器安装](/docker/container.md)
   * [异常情况](/docker/error.md)
+* Nginx
+  * [使用](/nginx/usage.md)
 * ExpressJS
   * [概述](/express/overview.md)
   * [使用](/express/usage.md)
@@ -84,6 +86,7 @@
   * [maven环境](/virtualbox/maven.md)
   * [nodejs环境](/virtualbox/nodejs.md)
   * [docker环境](/virtualbox/docker.md)
+  * [bitnami-gitlab环境](/virtualbox/bitnami-gitlab.md)
 * Vue
   * [概述](/vue/overview.md)
   * [使用](/vue/usage.md)
