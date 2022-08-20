@@ -27,6 +27,26 @@ geo $remote_addr $geo {
 ```
 约定 `$geo` 为0时放行， 为1时拦截
 
+## 过滤静态资源访问日志
+
+### 使用 `map` 定义静态资源变量, 在定义日志输出时增加 `if` 语句
+```shell
+map $uri $not_static {
+    default 1;
+    ~^(.*\.(gif|jpg|jpeg|png|bmp|swf|html|js|css|woff|ttf|ico)$) 0;
+}
+```
+```shell
+access_log  logs/host.access-$logdate.log  custom  if=$not_static;
+```
+
+### 在 `location` 中关闭静态资源访问日志
+```shell
+location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|html|js|css|woff|ttf|ico)$ {
+    access_log off;
+}
+```
+
 ## 完整配置示例
 ```conf
 
@@ -48,7 +68,13 @@ events {
 http {
     include       mime.types;
     default_type  application/octet-stream;
-     map $time_iso8601 $logdate {
+    
+    map $uri $not_static {
+        default 1;
+        ~^(.*\.(gif|jpg|jpeg|png|bmp|swf|html|js|css|woff|ttf|ico)$) 0;
+    }
+    
+    map $time_iso8601 $logdate {
         '~^(?<ymd>\\d{4}-\\d{2}-\\d{2})' $ymd;
         default                       'date-not-found';
     }
@@ -69,8 +95,8 @@ http {
                                     '请求参数: $query_string \n '
                                     '请求体: $request_body \n';
 
-    # access_log  logs/access-$logdate.log  custom;
-    # open_log_file_cache max=10;
+    # access_log  logs/access-$logdate.log  main;
+    open_log_file_cache max=10;
 
     sendfile        on;
     #tcp_nopush     on;
@@ -95,7 +121,11 @@ http {
 
         #charset koi8-r;
 
-        #access_log  logs/host.access-$logdate.log  main;
+        access_log  logs/host.access-$logdate.log  custom  if=$not_static;
+        
+        #location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|html|js|css|woff|ttf|ico)$ {
+    	    #access_log off;
+	    #}
         
         if ( $geo = 1 ) {
             return 403;
