@@ -82,12 +82,15 @@
 * VirtualBox
   * [概述](/virtualBox/overview.md)
   * [网络环境](/virtualBox/network.md)
+  * [bitnami-gitlab环境](/virtualBox/bitnamiGitlab.md)
+  * [docker环境](/virtualBox/docker.md)
   * [java环境](/virtualBox/java.md)
+  * [jenkins环境](/virtualBox/jenkins.md)
   * [maven环境](/virtualBox/maven.md)
   * [mysql环境](/virtualBox/mysql.md)
+  * [nginx环境](/virtualBox/nginx.md)
   * [nodejs环境](/virtualBox/nodejs.md)
-  * [docker环境](/virtualBox/docker.md)
-  * [bitnami-gitlab环境](/virtualBox/bitnamiGitlab.md)
+  * [redis环境](/virtualBox/redis.md)
 * Vue
   * [概述](/vue/overview.md)
   * [使用](/vue/usage.md)

@@ -116,3 +116,57 @@ rm -f /usr/local/bin/npm
 ln -s /opt/node/bin/node /usr/local/bin/node
 ln -s /opt/node/bin/npm /usr/local/bin/npm
 ```
+
+
+# VirtualBox CentOs7虚拟机环境下配置NVM
+
+## 安装方式一
+```shell
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+```
+
+## 安装方式二
+```shell
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+```
+
+以上两种方式因为墙的原因访问不了!
+
+## 安装方式三 git(v1.7.10+)方式
+```shell
+cd ~/
+git clone https://github.com/nvm-sh/nvm.git .nvm
+cd ~/.nvm
+./nvm.sh
+```
+
+## 安装方式四 手动安装
+
+### 手动下载nvm仓库, 上传到`~/`目录, 执行`.nvm/nvm.sh` , 先要给`nvm.sh`增加执行权限
+```shell
+[root@centos7full ~]# cd .nvm/
+[root@centos7full .nvm]# ./nvm.sh
+-bash: ./nvm.sh: 权限不够
+[root@centos7full .nvm]# chmod +x nvm.sh
+[root@centos7full .nvm]# ./nvm.sh
+```
+
+### 在`.bashrc`中添加以下配置
+```shell
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+```
+
+### 刷新`.bashrc`
+```shell
+[root@centos7full ~]# source .bashrc
+```
+
+## 查看nvm版本
+```shell
+[root@centos7full ~]# nvm -v
+0.39.1
+```
+
+nvm安装成功!!!
