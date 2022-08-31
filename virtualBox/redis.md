@@ -122,7 +122,7 @@ success
 3306/tcp 80/tcp 6379/tcp
 ```
 
-### 修改配置,将`protected-mode`设置为`no`, 注释调`bind 127.0.0.1 -::1`行
+### 修改配置,将`protected-mode`设置为`no`, 注释掉`bind 127.0.0.1 -::1`行
 ```shell
 vim /etc/redis/redis.conf
 ```
