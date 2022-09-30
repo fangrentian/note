@@ -79,6 +79,8 @@
 * ThinkJS
   * [概述](/thinkjs/overview.md)
   * [使用](/thinkjs/usage.md)
+* Video
+  * [使用](/video/usage.md)
 * VirtualBox
   * [概述](/virtualBox/overview.md)
   * [网络环境](/virtualBox/network.md)
