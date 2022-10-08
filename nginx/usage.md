@@ -231,3 +231,22 @@ http {
 }
 
 ```
+
+# windows批量删除日志(配合定时任务)
+
+```bat
+rem 删除NGINX的日志,保留30天的日志
+net stop nginx
+forfiles /p "C:\nginx-1.20.2\logs" /s /m access-*.log /d -30 /c "cmd /c del @path"
+forfiles /p "C:\nginx-1.20.2\logs" /s /m error.log  /c "cmd /c del @path"
+net start nginx
+```
+
+先停止nginx服务(前提是配置了nginx服务,比如用nssm配置了nginx服务),不定制服务,error.log可能删不掉,
+删除日志后,再启动nginx服务.
+
+    /p: 指定日志路径
+    /s: 递归查找文件
+    /m: 类似正则匹配查找文件
+    /d: 已最后修改时间过滤匹配的文件, -30表示,只查找30天以前的
+    /c: 执行CMD命令, 已双引号包裹
