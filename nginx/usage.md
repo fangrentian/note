@@ -242,7 +242,7 @@ forfiles /p "C:\nginx-1.20.2\logs" /s /m error.log  /c "cmd /c del @path"
 net start nginx
 ```
 
-先停止nginx服务(前提是配置了nginx服务,比如用nssm配置了nginx服务),不定制服务,error.log可能删不掉,
+先停止nginx服务(前提是配置了nginx服务,比如用nssm配置了nginx服务),不停止服务,error.log可能删不掉,
 删除日志后,再启动nginx服务.
 
     /p: 指定日志路径
