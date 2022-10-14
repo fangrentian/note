@@ -4,6 +4,8 @@
 
 全民万能VIP视频解析: https://vip.z6.net.cn/
 
+VIP在线视频解析: http://tool.liumingye.cn/video/
+
 云逸解析: https://jx.iztyy.com/svip/?url=
 
 kingtail: https://jx.kingtail.xyz/?url=
