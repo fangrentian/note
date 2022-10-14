@@ -1,8 +1,12 @@
 # VIP视频解析接口
 
-https://jx.618g.com/?url= 
+全民vip视频在线解析: https://jx.z6.net.cn/
 
-https://jx.kingtail.xyz/?url=
+全民万能VIP视频解析: https://vip.z6.net.cn/
+
+云逸解析: https://jx.iztyy.com/svip/?url=
+
+kingtail: https://jx.kingtail.xyz/?url=
 
 诺讯智能解析：https://www.nxflv.com/?url=
 
