@@ -125,4 +125,4 @@ apt-cache madison jenkins
 ```shell
 apt-get install -y jenkins=2.346.1
 ```
-    `2.346.1`支持Java 8, Java 11, or Java 17
+    2.346.1支持Java 8, Java 11, or Java 17 2.164.1支持Java 8, Java 11
