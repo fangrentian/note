@@ -105,3 +105,24 @@ success
 ```
 
 访问jenkins项目地址, 可以正常访问了!!!
+
+
+# VirtualBox Debian虚拟机环境下安装指定版本jenkins
+
+## 添加源
+```shell
+wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+sudo apt update
+```
+
+## 查询Jenkins可安装版本
+```shell
+apt-cache madison jenkins
+```
+
+## 安装指定版本Jenkins
+```shell
+apt-get install -y jenkins=2.346.1
+```
+    `2.346.1`支持Java 8, Java 11, or Java 17
