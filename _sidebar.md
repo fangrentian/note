@@ -23,6 +23,8 @@
   * [概述](/html/overview.md)
   * [meta标签特殊属性](/html/meta.md)
   * [知识碎片](/html/piecesOfKnowledge.md)
+* Java
+  * [VO、DTO、DO、PO的概念、区别和用处](/java/VO、DTO、DO、PO的概念、区别和用处.md)
 * Javascript
   * [概述](/javascript/overview.md)
   * [知识碎片](/javascript/piecesOfKnowledge.md)
