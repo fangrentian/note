@@ -78,6 +78,7 @@
 * Scss
   * [概述](/scss/overview.md)
 * SpringBoot
+  * [40个SpringBoot常用注解](/springboot/40个SpringBoot常用注解.md)
   * [概述](/springboot/overview.md)
   * [使用](/springboot/usage.md)
 * ThinkJS
