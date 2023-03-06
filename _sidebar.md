@@ -81,6 +81,7 @@
   * [40个SpringBoot常用注解](/springboot/40个SpringBoot常用注解.md)
   * [概述](/springboot/overview.md)
   * [使用](/springboot/usage.md)
+  * [WebUploader大文件上传下载实现思路，分片、断点续传代码实现](/springboot/WebUploader大文件上传下载实现思路，分片、断点续传代码实现.md)
 * ThinkJS
   * [概述](/thinkjs/overview.md)
   * [使用](/thinkjs/usage.md)
