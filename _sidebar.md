@@ -12,11 +12,11 @@
   * [使用](/docker/usage.md)
   * [容器安装](/docker/container.md)
   * [异常情况](/docker/error.md)
-* Nginx
-  * [使用](/nginx/usage.md)
 * ExpressJS
   * [概述](/express/overview.md)
   * [使用](/express/usage.md)
+* Git
+  * [使用](/git/usage.md)
 * Gulp
   * [使用](/gulp/usage.md)
 * HTML
@@ -42,6 +42,8 @@
   * [使用](jenkins/usage.md)
 * Linux
   * [概述](/linux/overview.md)
+* Nginx
+  * [使用](/nginx/usage.md)
 * NodeJS
   * [概述](/nodejs/overview.md)
   * [使用](/nodejs/usage.md)
