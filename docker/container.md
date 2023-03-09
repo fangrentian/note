@@ -134,3 +134,211 @@ docker run --name tomcat -p 9090:8080 -v /home/docker/tomcat/webapps:/usr/local/
 + -p  映射容器端口
 + -v  挂载容器目录到主机
 + -d  后台运行
+
+
+# 安装registry容器, 搭建私有仓库
+
+## 拉取镜像
+
+```shell
+docker pull registry
+[root@centos7full ~]# docker pull registry
+Using default tag: latest
+Trying to pull repository docker.io/library/registry ... 
+latest: Pulling from docker.io/library/registry
+ef5531b6e74e: Pull complete 
+a52704366974: Pull complete 
+dda5a8ba6f46: Pull complete 
+eb9a2e8a8f76: Pull complete 
+25bb6825962e: Pull complete 
+Digest: sha256:3f71055ad7c41728e381190fee5c4cf9b8f7725839dcf5c0fe3e5e20dc5db1fa
+Status: Downloaded newer image for docker.io/registry:latest
+
+```
+
+## 查看镜像
+
+```shell
+[root@centos7full ~]# docker images
+REPOSITORY                         TAG                 IMAGE ID            CREATED             SIZE
+docker.io/registry                 latest              0d153fadf70b        3 weeks ago         24.2 MB
+java                               8                   9a667facd251        6 months ago        444 MB
+docker.io/nginx                    1.22.0              1b84ed9be2d4        6 months ago        142 MB
+docker.io/suranagivinod/openjdk8   latest              cd836f0eb6c3        2 years ago         334 MB
+```
+
+## 配置`/etc/docker/daemon.json`
+
+```json
+{
+  "insecure-registries": ["192.168.1.222:5000"],
+  "registry-mirrors": ["https://zvj5fyew.mirror.aliyuncs.com"]
+}
+```
+
+**说明**
+
++ `insecure-registries`: 配置私有仓库地址
++ `registry-mirrors`: 加速源
+
+## 重启daemon和docker
+
+```shell
+[root@centos7full ~]# systemctl daemon-reload
+[root@centos7full ~]# systemctl restart docker
+```
+
+## 安装registry容器
+```shell
+[root@centos7full ~]# docker run -d -v /opt/registry:/var/lib/registry -p 5000:5000 --restart=always --name registry registry:latest
+ffdf6e7a8311fe53b95390bd9e40cc4faf8aa36475924a2138aec6cdd9ba4e20
+```
+
+**参数说明**
+
++ --name  容器别名
++ --restart=always  开机启动
++ -p  映射容器端口
++ -v  挂载容器目录到主机(Registry服务默认会将上传的镜像保存在容器的/var/lib/registry，我们将主机的/opt/registry目录挂载到该目录，即可实现将镜像保存到主机的/opt/registry目录了。)
++ -d  后台运行
+
+## 查看容器
+
+```shell
+[root@centos7full ~]# docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED              STATUS              PORTS                    NAMES
+ffdf6e7a8311        registry:latest     "/entrypoint.sh /e..."   About a minute ago   Up About a minute   0.0.0.0:5000->5000/tcp   registry
+```
+
+## 验证
+
+### 查看本地新搭建的仓库
+```shell
+[root@centos7full ~]# curl http://192.168.1.222:5000/v2/_catalog
+{"repositories":[]}
+```
+
+刚搭建的仓库,还没有镜像.
+
+### 为想要推送到本地私有仓库的镜像打上本地仓库的标签
+
+```shell
+[root@centos7full ~]# docker tag nginx:1.22.0 192.168.1.222:5000/nginx:test
+```
+
+### 重新查看镜像
+
+```shell
+[root@centos7full ~]# docker images
+REPOSITORY                         TAG                 IMAGE ID            CREATED             SIZE
+docker.io/registry                 latest              0d153fadf70b        3 weeks ago         24.2 MB
+java                               8                   9a667facd251        6 months ago        444 MB
+192.168.1.222:5000/nginx           test                1b84ed9be2d4        6 months ago        142 MB
+docker.io/nginx                    1.22.0              1b84ed9be2d4        6 months ago        142 MB
+docker.io/suranagivinod/openjdk8   latest              cd836f0eb6c3        2 years ago         334 MB
+```
+
+发现多了一个 `192.168.1.222:5000/nginx:test` 的镜像
+
+### 将标记为本地仓库镜像的某个镜像推送到本地仓库
+
+```shell
+[root@centos7full ~]# docker push 192.168.1.222:5000/nginx:test
+The push refers to a repository [192.168.1.222:5000/nginx]
+9760b00a1245: Retrying in 1 second 
+053c9e98185f: Retrying in 1 second 
+fdf60923d025: Retrying in 1 second 
+59dc71c10295: Retrying in 1 second 
+e08753aa4850: Retrying in 1 second 
+6485bed63627: Waiting 
+received unexpected HTTP status: 500 Internal Server Error
+```
+
+发现报错了,  使用`tailf /var/log/messages`或 `docker logs -f registry`查看下日志,发现包含一下信息
+
+```
+err.detail="filesystem: mkdir /var/lib/registry/docker: permission denied"
+```
+
+看起来好像是没权限, 有人说是可能是 一个 `selinux` 问题，需要在服务器上对挂载目录进行处理：
+
+```shell
+[root@centos7full ~]# chcon -Rt svirt_sandbox_file_t /opt/registry/
+```
+
+重新推送
+
+```shell
+[root@centos7full ~]# docker push 192.168.1.222:5000/nginx:test
+The push refers to a repository [192.168.1.222:5000/nginx]
+9760b00a1245: Pushed 
+053c9e98185f: Pushed 
+fdf60923d025: Pushed 
+59dc71c10295: Pushed 
+e08753aa4850: Pushed 
+6485bed63627: Pushed 
+test: digest: sha256:cae0639640038c2498fdc166683e3ade877672fa760ba0814ee3c3658edb6228 size: 1570
+```
+
+好像成功了
+
+### 查看本地仓库
+
+```shell
+[root@centos7full ~]# curl http://192.168.1.222:5000/v2/_catalog
+{"repositories":["nginx"]}
+```
+
+```shell
+[root@centos7full ~]# curl http://192.168.1.222:5000/v2/nginx/tags/list
+{"name":"nginx","tags":["test"]}
+```
+
+本地仓库已经多了一个`nginx:test`的镜像, 说明推送成功了
+
+### 拉取本地仓库镜像
+
+#### 删除本地 `192.168.1.222:5000/nginx:test` 的tag
+
+```shell
+[root@centos7full ~]# docker rmi 192.168.1.222:5000/nginx:test
+Untagged: 192.168.1.222:5000/nginx:test
+Untagged: 192.168.1.222:5000/nginx@sha256:cae0639640038c2498fdc166683e3ade877672fa760ba0814ee3c3658edb6228
+```
+
+#### 再次查看镜像
+
+```shell
+[root@centos7full ~]# docker images
+REPOSITORY                         TAG                 IMAGE ID            CREATED             SIZE
+docker.io/registry                 latest              0d153fadf70b        3 weeks ago         24.2 MB
+java                               8                   9a667facd251        6 months ago        444 MB
+docker.io/nginx                    1.22.0              1b84ed9be2d4        6 months ago        142 MB
+docker.io/suranagivinod/openjdk8   latest              cd836f0eb6c3        2 years ago         334 MB
+```
+
+`192.168.1.222:5000/nginx:test` 的tag已经没有了
+
+#### 拉取本地仓库的 `nginx:test` 镜像
+
+```shell
+[root@centos7full ~]# docker pull 192.168.1.222:5000/nginx:test
+Trying to pull repository 192.168.1.222:5000/nginx ... 
+test: Pulling from 192.168.1.222:5000/nginx
+Digest: sha256:cae0639640038c2498fdc166683e3ade877672fa760ba0814ee3c3658edb6228
+Status: Downloaded newer image for 192.168.1.222:5000/nginx:test
+```
+
+#### 再次查看镜像
+
+```shell
+[root@centos7full ~]# docker images
+REPOSITORY                         TAG                 IMAGE ID            CREATED             SIZE
+docker.io/registry                 latest              0d153fadf70b        3 weeks ago         24.2 MB
+java                               8                   9a667facd251        6 months ago        444 MB
+192.168.1.222:5000/nginx           test                1b84ed9be2d4        6 months ago        142 MB
+docker.io/nginx                    1.22.0              1b84ed9be2d4        6 months ago        142 MB
+docker.io/suranagivinod/openjdk8   latest              cd836f0eb6c3        2 years ago         334 MB
+```
+
+拉取成功
