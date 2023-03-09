@@ -226,7 +226,7 @@ KillMode=process
 WantedBy=multi-user.target
 ```
 
-## 防火墙开发刚才配置的端口
+## 防火墙开放刚才配置的端口
 ```shell
 [root@centos7full ~]# firewall-cmd --zone=public --add-port=2375/tcp --permanent
 ```
