@@ -342,3 +342,96 @@ docker.io/suranagivinod/openjdk8   latest              cd836f0eb6c3        2 yea
 ```
 
 拉取成功
+
+## 修改 `registry` 配置, 支持删除本地仓库镜像
+
+### 修改配置
+
+```shell
+[root@centos7full ~]# docker exec -it registry vi /etc/docker/registry/config.yml
+```
+
+增加 `delete` 字段, `enabled` 设置为 `true`
+
+```yaml
+version: 0.1
+log:
+  fields:
+    service: registry
+storage:
+  cache:
+    blobdescriptor: inmemory
+  filesystem:
+    rootdirectory: /var/lib/registry
+  delete:     
+    enabled: true
+http:        
+  addr: :5000                        
+  headers:                           
+    X-Content-Type-Options: [nosniff]
+health:          
+  storagedriver: 
+    enabled: true
+    interval: 10s
+    threshold: 3
+```
+
+### 重启 registry
+
+```shell
+[root@centos7full ~]# docker restart registry
+registry
+```
+
+### 获取待删除本地私有仓库镜像的sha256值
+
+命令 `curl --header "Accept:application/vnd.docker.distribution.manifest.v2+json" -I -XGET http://镜像地址/v2/镜像名称/manifests/镜像版本`
+
+示例
+
+```shell
+[root@centos7full ~]# curl --header "Accept:application/vnd.docker.distribution.manifest.v2+json" -I -XGET http://192.168.1.222:5000/v2/nginx/manifests/test
+HTTP/1.1 200 OK
+Content-Length: 1570
+Content-Type: application/vnd.docker.distribution.manifest.v2+json
+Docker-Content-Digest: sha256:cae0639640038c2498fdc166683e3ade877672fa760ba0814ee3c3658edb6228
+Docker-Distribution-Api-Version: registry/2.0
+Etag: "sha256:cae0639640038c2498fdc166683e3ade877672fa760ba0814ee3c3658edb6228"
+X-Content-Type-Options: nosniff
+Date: Thu, 09 Mar 2023 05:38:42 GMT
+```
+
+### 删除获取了sha256的本地私有仓库镜像
+
+命令
+
+`curl -I -XDELETE 私有仓库地址/v2/镜像名称/manifests/镜像对应sha256值`
+
+示例
+
+```shell
+[root@centos7full ~]# curl -I -XDELETE http://192.168.1.222:5000/v2/nginx/manifests/sha256:cae0639640038c2498fdc166683e3ade877672fa760ba0814ee3c3658edb6228
+HTTP/1.1 202 Accepted
+Docker-Distribution-Api-Version: registry/2.0
+X-Content-Type-Options: nosniff
+Date: Thu, 09 Mar 2023 05:45:12 GMT
+Content-Length: 0
+```
+
+### 查看本地私有仓库
+
+```shell
+[root@centos7full ~]# curl http://192.168.1.222:5000/v2/_catalog
+{"repositories":["nginx"]}
+[root@centos7full ~]# curl http://192.168.1.222:5000/v2/nginx/tags/list
+{"name":"nginx","tags":null
+```
+
+再次拉取 `192.168.1.222:5000/nginx:test`, 发现镜像已经没有了
+
+```shell
+[root@centos7full ~]# docker pull 192.168.1.222:5000/nginx:test
+Trying to pull repository 192.168.1.222:5000/nginx ... 
+Pulling repository 192.168.1.222:5000/nginx
+Error: image nginx:test not found
+```
