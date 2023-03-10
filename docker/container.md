@@ -199,7 +199,7 @@ ffdf6e7a8311fe53b95390bd9e40cc4faf8aa36475924a2138aec6cdd9ba4e20
 + --name  容器别名
 + --restart=always  开机启动
 + -p  映射容器端口
-+ -v  挂载容器目录到主机(Registry服务默认会将上传的镜像保存在容器的/var/lib/registry，我们将主机的/opt/registry目录挂载到该目录，即可实现将镜像保存到主机的/opt/registry目录了。)
++ -v  挂载容器目录到主机
 + -d  后台运行
 
 ## 查看容器
@@ -434,4 +434,210 @@ Content-Length: 0
 Trying to pull repository 192.168.1.222:5000/nginx ... 
 Pulling repository 192.168.1.222:5000/nginx
 Error: image nginx:test not found
+```
+
+## 支持https
+
+### 修改 `openssl` 配置
+
+一般情况下，证书只支持域名访问，要使其支持IP地址访问，需要修改配置文件 `/etc/pki/tls/openssl.cnf` ,在 `[ v3_req ]` 选项的 `keyUsage = nonRepudiation, digitalSignature, keyEncipherment`后
+追加内容, 最终如下
+
+```shell
+[ v3_req ]
+
+# Extensions to add to a certificate request
+
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+
+# 改成自己的域名
+# #DNS.1 = kb.example.com
+# #DNS.2 = helpdesk.example.org
+# #DNS.3 = systems.example.net
+#
+# # 改成自己的ip
+IP.1 = 192.168.1.222
+
+```
+
+### 生成自签名证书
+
+```shell
+[root@centos7full ~]# openssl req -x509 -days 36500 -new -nodes -newkey rsa:2048 -keyout /opt/registry/config/domain.key -out /opt/registry/config/domain.crt
+Generating a 2048 bit RSA private key
+..............+++
+..........................+++
+writing new private key to '/opt/registry/config/domain.key'
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [XX]:
+State or Province Name (full name) []:
+Locality Name (eg, city) [Default City]:
+Organization Name (eg, company) [Default Company Ltd]:
+Organizational Unit Name (eg, section) []:
+Common Name (eg, your name or your server's hostname) []:192.168.1.222
+Email Address []:
+```
+### 添加信任证书
+
+在 `docker` 证书目录添加 自定义的证书目录
+
+```shell
+[root@centos7full ~]# mkdir -p /etc/docker/certs.d/192.168.1.222:5000
+```
+
+将生成的证书复制到刚新建的自定义证书目录
+
+```shell
+[root@centos7full ~]# cp /opt/registry/config/domain.crt  /etc/docker/certs.d/192.168.1.222\:5000/ca.crt
+```
+
+`ca-bundle` 里追加配置
+
+```shell
+[root@centos7full ~]# cat /opt/registry/config/domain.crt >> /etc/pki/tls/certs/ca-bundle.crt
+```
+
+### 删除原来的 `registry` 容器
+
+```shell
+[root@centos7full ~]# docker rm registry
+registry
+```
+
+### 主机上创建需要挂载的文件夹及文件
+
+文件夹: `/opt/registry/auth` `/opt/registry/certs` `/opt/registry/config` `/opt/registry/data`
+
+文件: `/opt/registry/config/config.yml`
+
+### 生成鉴权文件
+
+```shell
+[root@centos7full ~]# echo "user:root passwd:ares" >/opt/registry/auth/htpasswd
+```
+
+### 加密鉴权文件
+
+```shell
+docker run --entrypoint htpasswd registry:latest -Bbn root ares  >> /opt/registry/auth/htpasswd
+```
+
+**报错**
+
+```shell
+[root@centos7full ~]# docker run --entrypoint htpasswd registry:latest -Bbn root ares  > /opt/registry/auth/htpasswd
+container_linux.go:290: starting container process caused "exec: \"htpasswd\": executable file not found in $PATH"
+/usr/bin/docker-current: Error response from daemon: oci runtime error: container_linux.go:290: starting container process caused "exec: \"htpasswd\": executable file not found in $PATH".
+```
+
+据说registry镜像在2.7相关版本中删除了/usr/bin/htpasswd文件，导致创建容器时提醒找不到可执行文件,解决办法用老版 [https://github.com/docker/distribution-library-image/issues/106](https://github.com/docker/distribution-library-image/issues/106)
+
+```shell
+[root@centos7full ~]# docker pull registry:2.6.2
+Trying to pull repository docker.io/library/registry ... 
+2.6.2: Pulling from docker.io/library/registry
+486039affc0a: Pull complete 
+ba51a3b098e6: Pull complete 
+470e22cd431a: Pull complete 
+1048a0cdabb0: Pull complete 
+ca5aa9d06321: Pull complete 
+Digest: sha256:c4bdca23bab136d5b9ce7c06895ba54892ae6db0ebfc3a2f1ac413a470b17e47
+Status: Downloaded newer image for docker.io/registry:2.6.2
+[root@centos7full ~]# docker run --entrypoint htpasswd registry:2.6.2 -Bbn root ares  >> /opt/registry/auth/htpasswd
+```
+
+### 重新安装 `registry` 容器
+
+```shell
+[root@centos7full ~]# docker run --name registry --restart=always -p 5000:5000 -e "REGISTRY_AUTH=htpasswd" -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key -v /opt/registry/config:/etc/docker/registry -v /opt/registry/data:/var/lib/registry -v /opt/registry/certs:/certs -v /opt/registry/auth:/auth -d registry:2.6.2
+433b7e6e53b42e332cf3cbc249d5ff63fb1c11d1feb6ca6c2e7cf4ec75129d10
+```
+
+**参数说明**
+
++ --name  容器别名
++ --restart=always  开机启动
++ -p  映射容器端口
++ -v  挂载容器目录到主机
++ -d  后台运行
++ -e  传递环境变量参数,配置证书(路径为容器的路径)
+
+
+**遇到了个异常**
+
+```shell
+/usr/bin/docker-current: Error response from daemon: oci runtime error: container_linux.go:290: starting container process caused "container init exited prematurely".
+```
+
+以为是挂载目录 `-v /opt/registry/config.yml:/etc/docker/registry/config.yml` 时没有提前创建好 `/opt/registry/config.yml`目录, 创建了对应目录,结果还是报同样的错误, 所以应该是系统把 `/etc/docker/registry/config.yml` 当作目录来处理了, 实际上没有这个目录, 这是个文件, 那么直接挂载该文件所在目录 `-v /opt/registry/config:/etc/docker/registry` 试试, 结果没有报错了, **需要
+提前在 `下创建 `config.yml` 配置文件**,  不然容器启动后有异常, 会报错'configuration error: open /etc/docker/registry/config.yml: no such file or directory'
+
+
+### 其他机器访问
+
+将证书分发到其他机器即可
+
+```shell
+[root@centos7full ~]# ssh root@192.168.1.231 "mkdir -p /etc/docker/certs.d/192.168.1.222:5000"
+root@192.168.1.231's password: 
+
+[root@centos7full ~]# scp /opt/registry/certs/domain.crt root@192.168.1.231:/etc/docker/certs.d/192.168.1.222\:5000/ca.crt
+root@192.168.1.231's password: 
+domain.crt   
+```
+
+### 未使用鉴权测试
+
+```shell
+[root@centos7full ~]# curl -k https://192.168.1.222:5000/v2/_catalog
+{"repositories":[]}
+```
+
+### 加鉴权后测试
+
+直接推送会提示失败,  登录后重新推送,  成功
+
+```shell
+[root@centos7full ~]# docker push 192.168.1.222:5000/comparer:test
+The push refers to a repository [192.168.1.222:5000/comparer]
+01e8df0e0edb: Preparing 
+5723392d8fc1: Preparing 
+55308b4854c8: Preparing 
+029ffaa3de03: Preparing 
+37a43b138e10: Preparing 
+8d768709f9c6: Preparing 
+d8a33133e477: Preparing 
+no basic auth credentials
+[root@centos7full ~]# docker login 192.168.1.222:5000
+Username: root
+Password: 
+Login Succeeded
+[root@centos7full ~]# docker push 192.168.1.222:5000/comparer:test
+The push refers to a repository [192.168.1.222:5000/comparer]
+01e8df0e0edb: Layer already exists 
+5723392d8fc1: Layer already exists 
+55308b4854c8: Layer already exists 
+029ffaa3de03: Layer already exists 
+37a43b138e10: Layer already exists 
+8d768709f9c6: Layer already exists 
+d8a33133e477: Layer already exists 
+test: digest: sha256:010a9a4c27afba2db2f5816f77cd33d6620096d7709a0da3a06a1c09e8edbaad size: 1796
+```
+
+```shell
+[root@centos7full ~]# curl -k -u root:ares https://192.168.1.222:5000/v2/_catalog
+{"repositories":["comparer","root/comparer"]}
+[root@centos7full ~]# curl -k -u root:ares https://192.168.1.222:5000/v2/comparer/tags/list
+{"name":"comparer","tags":["test","1"]}
 ```
