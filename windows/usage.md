@@ -1,3 +1,11 @@
+# CMD命令行激活系统
+
+```shell
+slmgr /ipk W269N-WFGWX-YVC9B-4J6C9-T83GX
+slmgr /skms kms.03k.org
+slmgr /ato
+```
+
 # 常用命令
 
 1. slmgr.vbs -xpr #系统激活查看
