@@ -8,6 +8,10 @@ slmgr -skms kms.0t.net.cn
 slmgr -ato
 ```
 
+## 客户端激活码
+
+[适用于 Windows Server 和 Windows 的密钥管理服务 (KMS) 客户端激活和产品密钥 | Microsoft Learn](https://learn.microsoft.com/zh-cn/windows-server/get-started/kms-client-activation-keys)
+
 ## 在windows server 2012 上通过powershell安装chrome
 
 ```shell

