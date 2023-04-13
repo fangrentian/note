@@ -1,5 +1,13 @@
 # windows server
 
+## CMD命令行激活系统
+
+```shell
+slmgr -ipk WX4NM-KYWYW-QJJR4-XV3QB-6VM33
+slmgr -skms kms.0t.net.cn
+slmgr -ato
+```
+
 ## 在windows server 2012 上通过powershell安装chrome
 
 ```shell
