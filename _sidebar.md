@@ -71,6 +71,8 @@
   * [logSymbols](/nodejs/logSymbols.md)
   * [downloadGitRepo](/nodejs/downloadGitRepo.md)
   * [nodeReadability](/nodejs/nodeReadability.md)
+* OpenAI
+  * [使用](/openai/usage.md)
 * React
   * [概述](/react/overview.md)
   * [使用](/react/usage.md)
