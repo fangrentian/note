@@ -110,4 +110,4 @@
   * [vue2.6.12源码解读](/vue/vue2.6.12源码解读.md)
 * Windows
   * [使用](/windows/usage.md)
-  * [windows server](/windows/windows server.md)
+  * [windows_server](/windows/windowsServer.md)
