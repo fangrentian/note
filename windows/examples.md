@@ -1,4 +1,4 @@
-# CMD常用命令使用示例
+# CMD常用命令
 
 ## 把某个应用服务化, 并设置开机启动
 
@@ -15,6 +15,15 @@ sc.exe [<servername>] create [<servicename>] [type= {own | share | kernel | file
 + start     启动方式
 + binpath   被配置为服务的可执行文件路径
 + depend    新配置的服务所依赖的服务
+
+**使用示例**
+
+```shell
+C:\Users\ares wei# sc create nginx binpath= "C:\testlogs\nginx\nginx.exe" start= auto
+[SC] CreateService 成功
+C:\Users\ares wei# sc delete nginx
+[SC] DeleteService 成功
+```
 
 ## 配置任务计划
 
@@ -72,3 +81,13 @@ at [\computername] <time> [/interactive] [/every:date[,...] | /next:date[,...]] 
 [`schtasks query`](https://learn.microsoft.com/zh-cn/windows-server/administration/windows-commands/schtasks-query)
 
 [`schtasks run`](https://learn.microsoft.com/zh-cn/windows-server/administration/windows-commands/schtasks-run)
+
+**使用示例**
+
+```shell
+C:\Users\ares wei# schtasks /create /tn "清除Nginx日志" /tr "cmd /c del /q /s C:\testlogs\nginx\logs\*.*" /sc monthly /d 1 /st 01:00
+成功: 成功创建计划任务 "清除Nginx日志"。
+C:\Users\ares wei# schtasks /delete /tn "清除Nginx日志"
+警告: 确实要删除任务 "清除Nginx日志" 吗 (Y/N )? y
+成功: 计划的任务 "清除Nginx日志" 被成功删除。
+```
