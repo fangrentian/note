@@ -109,5 +109,6 @@
   * [异常情况](/vue/error.md)
   * [vue2.6.12源码解读](/vue/vue2.6.12源码解读.md)
 * Windows
+  * [常用命令示例](/windows/examples.md)
   * [使用](/windows/usage.md)
   * [windows_server](/windows/windowsServer.md)
