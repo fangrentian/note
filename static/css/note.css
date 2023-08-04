@@ -20,3 +20,6 @@
 .sidebar ul li.active>a {
     border-right-width: 5px;
 }
+.sidebar .app-name-link>img {
+    width: 100px;
+}

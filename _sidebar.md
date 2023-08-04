@@ -96,6 +96,7 @@
   * [网络环境](/virtualBox/network.md)
   * [bitnami-gitlab环境](/virtualBox/bitnamiGitlab.md)
   * [docker环境](/virtualBox/docker.md)
+  * [gitlab环境](/virtualBox/gitlab.md)
   * [java环境](/virtualBox/java.md)
   * [jenkins环境](/virtualBox/jenkins.md)
   * [maven环境](/virtualBox/maven.md)
