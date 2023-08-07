@@ -21,7 +21,7 @@ yum install git -y
 2. 使用Git将NVM的源码克隆到本地的/usr/local/nvm目录下，并检查最新版本
 
 ```shell
-git clone https://gitee.com/mirrors/nvm.git /usr/local/nvm && cd /usr/local/nvm && git checkout `git describe --abbrev=0 --tags`
+git clone https://github.com/cnpm/nvm.git /usr/local/nvm && cd /usr/local/nvm && git checkout `git describe --abbrev=0 --tags`
 ```
 
 3. 执行以下命令，配置NVM的环境变量
