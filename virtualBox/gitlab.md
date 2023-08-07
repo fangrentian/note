@@ -181,7 +181,7 @@ https://gitlab.fra1.qualtrics.com/jfe/form/SV_6kVqZANThUQ1bZb?installation=omnib
 ## 下载安装包
 
 ```shell
-[root@localhost ~]# wget wget --content-disposition https://packages.gitlab.com/gitlab/gitlab-ee/packages/el/8/gitlab-ee-14.6.1-ee.0.el8.x86_64.rpm/download.rpm
+[root@localhost ~]# wget --content-disposition https://packages.gitlab.com/gitlab/gitlab-ee/packages/el/8/gitlab-ee-14.6.1-ee.0.el8.x86_64.rpm/download.rpm
 --2023-08-04 09:38:04--  http://wget/
 正在解析主机 wget (wget)... 失败：未知的名称或服务。
 wget: 无法解析主机地址 “wget”
