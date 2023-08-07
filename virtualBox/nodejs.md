@@ -117,6 +117,20 @@ ln -s /opt/node/bin/node /usr/local/bin/node
 ln -s /opt/node/bin/npm /usr/local/bin/npm
 ```
 
+## 安装方式三 gitee源
+
+### 安装
+
+```shell
+bash -c "$(curl -fsSL https://gitee.com/RubyKids/nvm-cn/blob/main/install.sh)"
+```
+
+### 卸载
+
+```shell
+bash -c "$(curl -fsSL https://gitee.com/RubyKids/nvm-cn/blob/main/uninstall.sh)"
+```
+
 
 # VirtualBox CentOs7虚拟机环境下配置NVM
 
