@@ -7,6 +7,8 @@
   * [css hack](/css/cssHack.md)
   * [弹性盒模型](/css/flex.md)
   * [CSS动画](/css/animate.md)
+* Diary
+  * [知识碎片](/diary/piecesOfKnowledge.md)
 * Docker
   * [概述](/docker/overview.md)
   * [使用](/docker/usage.md)
