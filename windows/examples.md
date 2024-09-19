@@ -197,3 +197,14 @@ pause
 ### 开始在Windows 10或11 Home上安装Sandbox
 
 以管理员身份运行刚创建的`bat`文件。等待几分钟，让脚本完成 Windows 10 或 11 家庭版上沙盒功能的安装过程。完成后重启电脑。
+
+
+# 恢复电脑自带应用操作
+
+1. 获取所有用户的Appx包（UWP应用）。
+2. 遍历这些包，对每个包执行操作。
+3. 用管理员权限重新注册每个包的AppXManifest.xml文件，并禁用开发模式。
+
+```shell
+Get-AppxPackage -AllUsers| Foreach {Add-AppxPackage -DisableDevelopmentMode -Register “( ((_.InstallLocation)\AppXManifest.xml”}
+```
