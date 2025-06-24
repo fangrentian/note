@@ -250,3 +250,21 @@ net start nginx
     /m: 类似正则匹配查找文件
     /d: 已最后修改时间过滤匹配的文件, -30表示,只查找30天以前的
     /c: 执行CMD命令, 已双引号包裹
+
+
+# centos6.9停止nginx服务失败问题
+
+```shell
+service nginx stop
+```
+以上命令执行失败, 直接使用`killall`命令来结束nginx所有进程.
+
+```shell
+killall nginx
+```
+
+重启nginx服务:
+
+```shell
+service nginx start
+```

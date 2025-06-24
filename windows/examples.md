@@ -208,3 +208,23 @@ pause
 ```shell
 Get-AppxPackage -AllUsers| Foreach {Add-AppxPackage -DisableDevelopmentMode -Register “( ((_.InstallLocation)\AppXManifest.xml”}
 ```
+
+# windows 10 11 删除微软账号
+
+> 主要通过删除注册表项实现
+
+尝试删除以下两个位置的注册表项：
+
+![](./images/1.png)
+
+![](./images/2.png)
+
+注销账户重新登录,查看账户设置里电子邮件和账户里是否有删除微软账号的选项, 如果没有,继续删除以下两个位置的注册表项：
+
+![](./images/3.jpg)
+
+![](./images/4.png)
+
+再次注销账户重新登录,查看账户设置里电子邮件和账户应该已经有删除微软账号的选项：
+
+![](./images/5.png)
