@@ -29,6 +29,7 @@
   * [用户在浏览器输入URL回车后会发生了什么](/html/用户在浏览器输入URL回车后会发生了什么.md)
 * Java
   * [VO、DTO、DO、PO的概念、区别和用处](/java/VO、DTO、DO、PO的概念、区别和用处.md)
+  * [使用](/java/usage.md)
 * Javascript
   * [概述](/javascript/overview.md)
   * [知识碎片](/javascript/piecesOfKnowledge.md)
