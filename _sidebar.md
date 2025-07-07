@@ -102,6 +102,7 @@
   * [gitlab环境](/virtualBox/gitlab.md)
   * [java环境](/virtualBox/java.md)
   * [jenkins环境](/virtualBox/jenkins.md)
+  * [k8s环境](/virtualBox/k8s.md)
   * [maven环境](/virtualBox/maven.md)
   * [mysql环境](/virtualBox/mysql.md)
   * [nginx环境](/virtualBox/nginx.md)
