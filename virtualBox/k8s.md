@@ -1379,3 +1379,750 @@ Then you can join any number of worker nodes by running the following on each as
 kubeadm join 192.168.4.108:6443 --token 1ejxhq.zrfd9tnpkuhk8lhu \
         --discovery-token-ca-cert-hash sha256:8b3b17638838e31dfec670430ce00b6f33e8667d8d754946e8fa6b6bc1e753f1 
 ```
+
+按提示执行以下命令
+```shell
+[ares@ares-master ~]$ mkdir -p $HOME/.kube
+[ares@ares-master ~]$ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+[sudo] ares 的密码：
+[ares@ares-master ~]$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+## 安装Calico网络插件
+通过梯子获取[安装`calico`的配置文件](https://raw.githubusercontent.com/projectcalico/calico/refs/tags/v3.30.2/manifests/tigera-operator.yaml)
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tigera-operator
+  labels:
+    name: tigera-operator
+    pod-security.kubernetes.io/enforce: privileged
+---
+# Source: tigera-operator/templates/tigera-operator/02-serviceaccount-tigera-operator.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tigera-operator
+  namespace: tigera-operator
+  labels:
+    k8s-app: tigera-operator
+imagePullSecrets:
+  []
+---
+# Source: tigera-operator/templates/tigera-operator/02-role-tigera-operator-secrets.yaml
+# Permissions required to manipulate operator secrets for a Calico cluster.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tigera-operator-secrets
+  labels:
+    k8s-app: tigera-operator
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - create
+      - update
+      - delete
+---
+# Source: tigera-operator/templates/tigera-operator/02-role-tigera-operator.yaml
+# Permissions required when running the operator for a Calico cluster.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tigera-operator
+  labels:
+    k8s-app: tigera-operator
+rules:
+  # The tigera/operator installs CustomResourceDefinitions necessary for itself
+  # and Calico more broadly to function.
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+  # We only allow update access to our own CRDs.
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - update
+    resourceNames:
+      - apiservers.operator.tigera.io
+      - gatewayapis.operator.tigera.io
+      - imagesets.operator.tigera.io
+      - installations.operator.tigera.io
+      - tigerastatuses.operator.tigera.io
+      - bgpconfigurations.crd.projectcalico.org
+      - bgpfilters.crd.projectcalico.org
+      - bgppeers.crd.projectcalico.org
+      - blockaffinities.crd.projectcalico.org
+      - caliconodestatuses.crd.projectcalico.org
+      - clusterinformations.crd.projectcalico.org
+      - felixconfigurations.crd.projectcalico.org
+      - globalnetworkpolicies.crd.projectcalico.org
+      - stagedglobalnetworkpolicies.crd.projectcalico.org
+      - globalnetworksets.crd.projectcalico.org
+      - hostendpoints.crd.projectcalico.org
+      - ipamblocks.crd.projectcalico.org
+      - ipamconfigs.crd.projectcalico.org
+      - ipamhandles.crd.projectcalico.org
+      - ippools.crd.projectcalico.org
+      - ipreservations.crd.projectcalico.org
+      - kubecontrollersconfigurations.crd.projectcalico.org
+      - networkpolicies.crd.projectcalico.org
+      - stagednetworkpolicies.crd.projectcalico.org
+      - stagedkubernetesnetworkpolicies.crd.projectcalico.org
+      - networksets.crd.projectcalico.org
+      - tiers.crd.projectcalico.org
+      - whiskers.operator.tigera.io
+      - goldmanes.operator.tigera.io
+      - managementclusterconnections.operator.tigera.io
+  # We need update and delete access for ANP/BANP CRDs to set owner refs when assuming control of pre-existing CRDs, for example on OCP.
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - update
+      - delete
+    resourceNames:
+      - adminnetworkpolicies.policy.networking.k8s.io
+      - baselineadminnetworkpolicies.policy.networking.k8s.io
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+      - pods
+      - podtemplates
+      - services
+      - endpoints
+      - events
+      - configmaps
+      - serviceaccounts
+    verbs:
+      - create
+      - get
+      - list
+      - update
+      - delete
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - resourcequotas
+      - secrets
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - resourcequotas
+    verbs:
+      - create
+      - get
+      - list
+      - update
+      - delete
+      - watch
+    resourceNames:
+      - calico-critical-pods
+      - tigera-critical-pods
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      # Need to update node labels when migrating nodes.
+      - get
+      - patch
+      - list
+      # We need this for Typha autoscaling
+      - watch
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - clusterroles
+      - clusterrolebindings
+      - rolebindings
+      - roles
+    verbs:
+      - create
+      - get
+      - list
+      - update
+      - delete
+      - watch
+      - bind
+      - escalate
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - daemonsets
+      - statefulsets
+    verbs:
+      - create
+      - get
+      - list
+      - patch
+      - update
+      - delete
+      - watch
+  - apiGroups:
+      - apps
+    resourceNames:
+      - tigera-operator
+    resources:
+      - deployments/finalizers
+    verbs:
+      - update
+  # The operator needs read and update permissions on the APIs that it controls.
+  - apiGroups:
+      - operator.tigera.io
+    resources:
+      # Note: any resources used by the operator within an OwnerReference for resources
+      # it creates requires permissions to <resource>/finalizers.
+      - apiservers
+      - apiservers/finalizers
+      - apiservers/status
+      - gatewayapis
+      - gatewayapis/finalizers
+      - gatewayapis/status
+      - goldmanes
+      - goldmanes/finalizers
+      - goldmanes/status
+      - imagesets
+      - installations
+      - installations/finalizers
+      - installations/status
+      - managementclusterconnections
+      - managementclusterconnections/finalizers
+      - managementclusterconnections/status
+      - tigerastatuses
+      - tigerastatuses/status
+      - tigerastatuses/finalizers
+      - whiskers
+      - whiskers/finalizers
+      - whiskers/status
+    verbs:
+      - get
+      - list
+      - update
+      - patch
+      - watch
+  # In addition to the above, the operator creates and deletes TigeraStatus resources.
+  - apiGroups:
+      - operator.tigera.io
+    resources:
+      - tigerastatuses
+    verbs:
+      - create
+      - delete
+  # In addition to the above, the operator should have the ability to delete their own resources during uninstallation.
+  - apiGroups:
+      - operator.tigera.io
+    resources:
+      - installations
+      - apiservers
+      - whiskers
+      - goldmanes
+    verbs:
+      - delete
+  - apiGroups:
+    - networking.k8s.io
+    resources:
+    - networkpolicies
+    verbs:
+      - create
+      - update
+      - delete
+      - get
+      - list
+      - watch
+  - apiGroups:
+    - crd.projectcalico.org
+    resources:
+    - felixconfigurations
+    - ippools
+    verbs:
+    - create
+    - patch
+    - list
+    - get
+    - watch
+  - apiGroups:
+    - crd.projectcalico.org
+    resources:
+    - kubecontrollersconfigurations
+    - bgpconfigurations
+    - clusterinformations
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - projectcalico.org
+    resources:
+    - ippools
+    verbs:
+    - create
+    - update
+    - delete
+    - patch
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - projectcalico.org
+    resources:
+    - ipamconfigurations
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+      - scheduling.k8s.io
+    resources:
+      - priorityclasses
+    verbs:
+      - create
+      - get
+      - list
+      - update
+      - delete
+      - watch
+  - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+    verbs:
+      - create
+      - get
+      - list
+      - update
+      - delete
+      - watch
+  - apiGroups:
+      - apiregistration.k8s.io
+    resources:
+      - apiservices
+    verbs:
+      - list
+      - watch
+      - create
+      - update
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resources:
+      - mutatingwebhookconfigurations
+    verbs:
+      - delete
+  # Needed for operator lock
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - create
+      - get
+      - list
+      - update
+      - delete
+      - watch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - csidrivers
+    verbs:
+      - list
+      - watch
+      - update
+      - get
+      - create
+      - delete
+  # Add the permissions to monitor the status of certificate signing requests when certificate management is enabled.
+  - apiGroups:
+      - certificates.k8s.io
+    resources:
+      - certificatesigningrequests
+    verbs:
+      - list
+      - watch
+  # Add the appropriate pod security policy permissions
+  - apiGroups:
+      - policy
+    resources:
+      - podsecuritypolicies
+    resourceNames:
+      - tigera-operator
+    verbs:
+      - use
+  - apiGroups:
+      - policy
+    resources:
+      - podsecuritypolicies
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+  # For tiered network policy actions, tigera-apiserver requires that we authorize the operator for the tier.networkpolicies and tier.globalnetworkpolicies pseudo-kinds.
+  - apiGroups:
+      - projectcalico.org
+    resourceNames:
+      - allow-tigera.*
+    resources:
+      - tier.networkpolicies
+      - tier.globalnetworkpolicies
+    verbs:
+      - list
+      - watch
+      - get
+      - create
+      - update
+      - delete
+  # For tiered network policy actions, tigera-apiserver requires get authorization on the associated tier.
+  - apiGroups:
+      - projectcalico.org
+    resourceNames:
+      - allow-tigera
+    resources:
+      - tiers
+    verbs:
+      - get
+      - delete
+      - update
+  # Separated from the above rule since resourceNames does not support the create verb, and requires a field selector for list/watch verbs.
+  - apiGroups:
+      - projectcalico.org
+    resources:
+      - tiers
+    verbs:
+      - create
+      - list
+      - watch
+  # Additions for Gateway API support.
+  # 1. The operator needs to reconcile gateway.networking.k8s.io and gateway.envoyproxy.io CRDs.
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - update
+    resourceNames:
+      - backendlbpolicies.gateway.networking.k8s.io
+      - backendtlspolicies.gateway.networking.k8s.io
+      - gatewayclasses.gateway.networking.k8s.io
+      - gateways.gateway.networking.k8s.io
+      - grpcroutes.gateway.networking.k8s.io
+      - httproutes.gateway.networking.k8s.io
+      - referencegrants.gateway.networking.k8s.io
+      - tcproutes.gateway.networking.k8s.io
+      - tlsroutes.gateway.networking.k8s.io
+      - udproutes.gateway.networking.k8s.io
+      - backends.gateway.envoyproxy.io
+      - backendtrafficpolicies.gateway.envoyproxy.io
+      - clienttrafficpolicies.gateway.envoyproxy.io
+      - envoyextensionpolicies.gateway.envoyproxy.io
+      - envoypatchpolicies.gateway.envoyproxy.io
+      - envoyproxies.gateway.envoyproxy.io
+      - httproutefilters.gateway.envoyproxy.io
+      - securitypolicies.gateway.envoyproxy.io
+  # 2. GatewayClasses and EnvoyProxy configurations.
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - gatewayclasses
+    verbs:
+      - create
+      - update
+      - delete
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - gateway.envoyproxy.io
+    resources:
+      - envoyproxies
+    verbs:
+      - create
+      - update
+      - delete
+      - list
+      - get
+      - watch
+  # 3. For Gateway API the operator needs to be able to create and reconcile a certificate
+  # generation job.
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - create
+      - list
+      - watch
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - update
+    resourceNames:
+      - tigera-gateway-api-gateway-helm-certgen
+---
+# Source: tigera-operator/templates/tigera-operator/02-rolebinding-tigera-operator.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tigera-operator
+  labels:
+    k8s-app: tigera-operator
+subjects:
+- kind: ServiceAccount
+  name: tigera-operator
+  namespace: tigera-operator
+roleRef:
+  kind: ClusterRole
+  name: tigera-operator
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: tigera-operator/templates/tigera-operator/02-rolebinding-tigera-operator-secrets.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tigera-operator-secrets
+  namespace: tigera-operator
+  labels:
+    k8s-app: tigera-operator
+subjects:
+  - kind: ServiceAccount
+    name: tigera-operator
+    namespace: tigera-operator
+roleRef:
+  kind: ClusterRole
+  name: tigera-operator-secrets
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: tigera-operator/templates/tigera-operator/02-tigera-operator.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tigera-operator
+  namespace: tigera-operator
+  labels:
+    k8s-app: tigera-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: tigera-operator
+  template:
+    metadata:
+      labels:
+        name: tigera-operator
+        k8s-app: tigera-operator
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+        - effect: NoExecute
+          operator: Exists
+        - effect: NoSchedule
+          operator: Exists
+      serviceAccountName: tigera-operator
+      # Set the termination grace period to match how long the operator will wait for
+      # resources to terminate when being uninstalled.
+      terminationGracePeriodSeconds: 60
+      hostNetwork: true
+      # This must be set when hostNetwork is true or else the cluster services won't resolve
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: tigera-operator
+          image: quay.io/tigera/operator:v1.38.3
+          imagePullPolicy: IfNotPresent
+          command:
+            - operator
+          args:
+            # Configure tigera-operator to manage installation of the necessary CRDs.
+            - -manage-crds=true
+          volumeMounts:
+            - name: var-lib-calico
+              readOnly: true
+              mountPath: /var/lib/calico
+          env:
+            - name: WATCH_NAMESPACE
+              value: ""
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "tigera-operator"
+            - name: TIGERA_OPERATOR_INIT_IMAGE_VERSION
+              value: v1.38.3
+          envFrom:
+            - configMapRef:
+                name: kubernetes-services-endpoint
+                optional: true
+      volumes:
+        - name: var-lib-calico
+          hostPath:
+            path: /var/lib/calico
+```
+同样通过梯子获取[官网的自定义配置文件](https://raw.githubusercontent.com/projectcalico/calico/refs/tags/v3.30.2/manifests/custom-resources.yaml),并修改`cidr`为`kubeadm init`时配置的网段
+```yaml
+# This section includes base Calico installation configuration.
+# For more information, see: https://docs.tigera.io/calico/latest/reference/installation/api#operator.tigera.io/v1.Installation
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+  name: default
+spec:
+  # Configures Calico networking.
+  calicoNetwork:
+    ipPools:
+      - name: default-ipv4-ippool
+        blockSize: 26
+        cidr: 10.244.0.0/16
+        encapsulation: VXLANCrossSubnet
+        natOutgoing: Enabled
+        nodeSelector: all()
+
+---
+
+# This section configures the Calico API server.
+# For more information, see: https://docs.tigera.io/calico/latest/reference/installation/api#operator.tigera.io/v1.APIServer
+apiVersion: operator.tigera.io/v1
+kind: APIServer
+metadata:
+  name: default
+spec: {}
+
+---
+
+# Configures the Calico Goldmane flow aggregator.
+apiVersion: operator.tigera.io/v1
+kind: Goldmane
+metadata:
+  name: default
+
+---
+
+# Configures the Calico Whisker observability UI.
+apiVersion: operator.tigera.io/v1
+kind: Whisker
+metadata:
+  name: default
+```
+将两个配置文件放在用户根目录
+
+按官网提示安装需要的组件,逐行执行以下命令
+```shell
+sudo nerdctl pull quay.io/tigera/operator:v1.38.3
+sudo nerdctl pull calico/node:v3.30.2
+sudo nerdctl pull calico/cni:v3.30.2
+sudo nerdctl pull calico/apiserver:v3.30.2
+sudo nerdctl pull calico/kube-controllers:v3.30.2
+sudo nerdctl pull calico/envoy-gateway:v3.30.2
+sudo nerdctl pull calico/envoy-proxy:v3.30.2
+sudo nerdctl pull calico/envoy-ratelimit:v3.30.2
+sudo nerdctl pull calico/dikastes:v3.30.2
+sudo nerdctl pull calico/pod2daemon-flexvol:v3.30.2
+sudo nerdctl pull calico/key-cert-provisioner:v3.30.2
+sudo nerdctl pull calico/goldmane:v3.30.2
+sudo nerdctl pull calico/whisker:v3.30.2
+sudo nerdctl pull calico/whisker-backend:v3.30.2
+```
+
+安装`calico`,并使用自定义配置
+```shell
+[ares@ares-master ~]$ kubectl apply -f calico-tigera-operator-3.30.2.yaml
+namespace/tigera-operator created
+serviceaccount/tigera-operator created
+clusterrole.rbac.authorization.k8s.io/tigera-operator-secrets created
+clusterrole.rbac.authorization.k8s.io/tigera-operator created
+clusterrolebinding.rbac.authorization.k8s.io/tigera-operator created
+rolebinding.rbac.authorization.k8s.io/tigera-operator-secrets created
+deployment.apps/tigera-operator created
+[ares@ares-master ~]$ kubectl apply -f calico-custom-resources-3.30.2.yaml
+installation.operator.tigera.io/default created
+apiserver.operator.tigera.io/default created
+goldmane.operator.tigera.io/default created
+whisker.operator.tigera.io/default created
+```
+查看组件是否正常
+```shell
+[ares@ares-master ~]$ kubectl get pod -A
+NAMESPACE          NAME                                       READY   STATUS    RESTARTS   AGE
+calico-apiserver   calico-apiserver-bf5f566bc-tnsxl           1/1     Running   0          106s
+calico-apiserver   calico-apiserver-bf5f566bc-vv88l           1/1     Running   0          106s
+calico-system      calico-kube-controllers-557b4cfdc5-sn98d   1/1     Running   0          102s
+calico-system      calico-node-x5f9g                          1/1     Running   0          102s
+calico-system      calico-typha-85f779d77f-lhczl              1/1     Running   0          102s
+calico-system      csi-node-driver-8xp7p                      2/2     Running   0          102s
+calico-system      goldmane-5f56496f4c-llssq                  1/1     Running   0          102s
+calico-system      whisker-675b77f997-mdksr                   2/2     Running   0          89s
+kube-system        coredns-757cc6c8f8-5vtdv                   1/1     Running   0          151m
+kube-system        coredns-757cc6c8f8-ld2jz                   1/1     Running   0          151m
+kube-system        etcd-ares-master                           1/1     Running   0          151m
+kube-system        kube-apiserver-ares-master                 1/1     Running   0          151m
+kube-system        kube-controller-manager-ares-master        1/1     Running   0          151m
+kube-system        kube-proxy-f6j52                           1/1     Running   0          151m
+kube-system        kube-scheduler-ares-master                 1/1     Running   0          151m
+tigera-operator    tigera-operator-747864d56d-rxg7d           1/1     Running   0          2m5s
+```
+
+把`slave`节点加入集群
+```shell
+[ares@ares-slave ~]$ sudo kubeadm join 192.168.4.108:6443 --token 1ejxhq.zrfd9tnpkuhk8lhu         --discovery-token-ca-cert-hash sha256:8b3b17638838e31dfec670430ce00b6f33e8667d8d754946e8fa6b6bc1e753f1
+[preflight] Running pre-flight checks
+[preflight] Reading configuration from the "kubeadm-config" ConfigMap in namespace "kube-system"...
+[preflight] Use 'kubeadm init phase upload-config --config your-config-file' to re-upload it.
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Starting the kubelet
+[kubelet-check] Waiting for a healthy kubelet at http://127.0.0.1:10248/healthz. This can take up to 4m0s
+[kubelet-check] The kubelet is healthy after 1.002155193s
+[kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap
+
+This node has joined the cluster:
+* Certificate signing request was sent to apiserver and a response was received.
+* The Kubelet was informed of the new secure connection details.
+
+Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
+```
+
+在`master`节点上查看`slave`节点是否已经加入集群
+```shell
+[ares@ares-master ~]$ kubectl get nodes
+NAME          STATUS   ROLES           AGE     VERSION
+ares-master   Ready    control-plane   3h34m   v1.33.2
+ares-slave    Ready    <none>          14m     v1.33.2
+ares-slave1   Ready    <none>          9m54s   v1.33.2
+```
+
+这里的`slave`节点已经加入集群了，但是`slave`节点的`ROLES`为`<none>`，其实等同于`worker`.我们可以手动给`slave`节点指定`ROLES`为`work`, 在`master`节点配置后,重新查看,已经显示为`work`
+```shell
+[ares@ares-master ~]$ kubectl label node ares-slave node-role.kubernetes.io/worker=""
+node/ares-slave labeled
+[ares@ares-master ~]$ kubectl label node ares-slave1 node-role.kubernetes.io/worker=""
+node/ares-slave1 labeled
+[ares@ares-master ~]$ kubectl get nodes
+NAME          STATUS   ROLES           AGE     VERSION
+ares-master   Ready    control-plane   3h43m   v1.33.2
+ares-slave    Ready    worker          23m     v1.33.2
+ares-slave1   Ready    worker          18m     v1.33.2
+```
