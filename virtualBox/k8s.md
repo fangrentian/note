@@ -784,6 +784,38 @@ version = 2
 #### 修改配置以支持 systemd cgroup 驱动
 把/etc/containerd/config.toml文件中的`SystemdCgroup`配置改为true
 
+#### 修改`sandbox_image`配置
+把/etc/containerd/config.toml文件中的`sandbox_image`由原来的`registry.k8s.io/pause:3.6`改为`registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.10`
+> 其它镜像代理
+>- [DaoCloud](docker.m.daocloud.io/k8s-gcr-mirror/pause:3.10)
+
+#### 配置镜像仓库
+在/etc/containerd/config.toml文件中找到`[plugins."io.containerd.grpc.v1.cri".registry]`,配置`config_path`
+
+```shell
+[plugins."io.containerd.grpc.v1.cri".registry]
+  config_path = "/etc/containerd/certs.d"
+```
+在`certs.d`目录下创建相应的文件夹, 在每个目录下添加 hosts.toml 文件定义镜像代理
+
+```shell
+[ares@ares-master ~]$ sudo mkdir -p /etc/containerd/certs.d/docker.io
+[ares@ares-master ~]$ sudo mkdir -p /etc/containerd/certs.d/gcr.io
+[ares@ares-master ~]$ sudo mkdir -p /etc/containerd/certs.d/k8s.gcr.io
+[ares@ares-master ~]$ sudo mkdir -p /etc/containerd/certs.d/quay.io
+[ares@ares-master ~]$ sudo mkdir -p /etc/containerd/certs.d/ghcr.io
+```
+按一下格式创建hosts.toml文件
+```shell
+server = "https://k8s.gcr.io"
+
+[host."https://k8s-gcr.m.daocloud.io"]
+  capabilities = ["pull", "push", "resolve"]
+
+[host."https://registry.cn-hangzhou.aliyuncs.com/google_containers"]
+  capabilities = ["pull", "push", "resolve"]
+```
+
 #### 重启containerd服务,查看状态, 查看版本
 ```shell
 [ares@ares-master ~]$ sudo systemctl restart containerd
@@ -816,6 +848,28 @@ containerd containerd.io 1.6.32 8b3b7ca2e5ce38e8f31a34f35b2b68ceb8470d89
 ```shell
 [ares@ares-master ~]$ sudo systemctl enable containerd
 Created symlink /etc/systemd/system/multi-user.target.wants/containerd.service → /usr/lib/systemd/system/containerd.service.
+```
+
+#### 安装crictl,并配置命令补全
+crictl 是一个用来管理容器运行时的命令行工具，它就像是一个“中间人”，帮助 Kubernetes 和容器运行时（比如 containerd）之间进行通信。
+
+1. runtime-endpoint
+这个字段告诉 crictl，容器运行时（containerd）的运行时接口地址在哪里。这里写的是 unix:///run/containerd/containerd.sock，意思就是通过 Unix 套接字（socket）的方式，连接到 /run/containerd/containerd.sock 这个地址。简单来说，就是告诉 crictl 怎么和 containerd 通信。
+
+2. image-endpoint
+这个字段和 runtime-endpoint 类似，不过它是用来指定镜像服务的接口地址。这里也是 unix:///run/containerd/containerd.sock，说明镜像服务和运行时服务是同一个地址，都是通过 containerd 来管理的。
+```shell
+[ares@ares-master ~]$ sudo tee /etc/crictl.yaml > /dev/null <<-'EOF'
+> runtime-endpoint: unix:///run/containerd/containerd.sock
+> image-endpoint: unix:///run/containerd/containerd.sock
+> timeout: 10
+> debug: false
+> EOF
+
+[ares@ares-master ~]$ sudo crictl images
+IMAGE               TAG                 IMAGE ID            SIZE
+
+[ares@ares-master ~]$ crictl completion bash | sudo tee /etc/bash_completion.d/crictl > /dev/null
 ```
 
 ## 安装nerdctl工具
@@ -953,6 +1007,19 @@ share/doc/nerdctl-full/SHA256SUMS
 nerdctl version 2.1.2
 ```
 
+### 只能以普通用户运行,不能以sudo运行, 但是containerd需要sudo运行
+当使用 `sudo` 时，默认不会继承当前用户的 `PATH`，而是使用 `root` 的安全路径（通常是 `/usr/bin:/bin`）。
+用`sudo visudo`命令编辑`/etc/sudoers`文件, 修改`Defaults secure_path`的值, 默认值为`/sbin:/bin:/usr/sbin:/usr/bin`,
+追加当前用户的路径 `/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin`, 结果如下
+`Defaults    secure_path = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/sbin:/usr/bin`
+
+### 安装nerdctl命令补全
+```shell
+[ares@ares-master ~]$ nerdctl completion bash | sudo tee /etc/bash_completion.d/nerdctl > /dev/null
+[ares@ares-master ~]$ source /etc/bash_completion.d/nerdctl
+```
+> 解释： nerdctl completion bash 生成补全脚本, 通过管道 (|) 传递给 sudo tee, tee 以 root 权限写入文件, > /dev/null 抑制 tee 的额外输出
+
 ### 安装 buildkit (可选)
 支持构建镜像的功能
 ```shell
@@ -1001,5 +1068,132 @@ Created symlink /etc/systemd/system/multi-user.target.wants/buildkit.service →
 7月 07 17:01:01 ares-master buildkitd[56543]: time="2025-07-07T17:01:01+08:00" level=info msg="running server on /run/buildkit/b>
 7月 07 17:01:01 ares-master systemd[1]: Started buildkit.service.
 ```
-#### 启动 buildkitd 服务（可配置 systemd）
 
+## 安装 Kubernetes 套件（kubelet, kubeadm, kubectl）
+
+### 添加Kubernetes源
+```shell
+[ares@ares-master ~]$ sudo cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+> [kubernetes]
+> name=Kubernetes
+> baseurl=https://mirrors.tuna.tsinghua.edu.cn/kubernetes/core%3A/stable%3A/v1.33/rpm/
+> enabled=1
+> gpgcheck=1
+> gpgkey=https://mirrors.tuna.tsinghua.edu.cn/kubernetes/core%3A/stable%3A/v1.33/rpm/repodata/repomd.xml.key
+> exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
+> EOF
+[sudo] ares 的密码：
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.tuna.tsinghua.edu.cn/kubernetes/core%3A/stable%3A/v1.33/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://mirrors.tuna.tsinghua.edu.cn/kubernetes/core%3A/stable%3A/v1.33/rpm/repodata/repomd.xml.key
+exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
+```
+
+### 安装kubuadm,kubelet,kubectl
+```shell
+[ares@ares-master ~]$ sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+Kubernetes                                                                                        17 kB/s | 9.8 kB     00:00    
+依赖关系解决。
+=================================================================================================================================
+ 软件包                                架构                  版本                                仓库                       大小
+=================================================================================================================================
+安装:
+ kubeadm                               x86_64                1.33.2-150500.1.1                   kubernetes                 12 M
+ kubectl                               x86_64                1.33.2-150500.1.1                   kubernetes                 11 M
+ kubelet                               x86_64                1.33.2-150500.1.1                   kubernetes                 15 M
+安装依赖关系:
+ conntrack-tools                       x86_64                1.4.4-11.0.1.an8                    BaseOS                    184 k
+ cri-tools                             x86_64                1.33.0-150500.1.1                   kubernetes                7.5 M
+ kubernetes-cni                        x86_64                1.6.0-150500.1.1                    kubernetes                8.0 M
+ libnetfilter_cthelper                 x86_64                1.0.0-15.0.1.an8                    BaseOS                     15 k
+ libnetfilter_cttimeout                x86_64                1.0.0-11.0.1.an8                    BaseOS                     15 k
+ libnetfilter_queue                    x86_64                1.0.5-1.an8                         BaseOS                     31 k
+
+事务概要
+=================================================================================================================================
+安装  9 软件包
+
+总下载：55 M
+安装大小：301 M
+下载软件包：
+(1/9): libnetfilter_cthelper-1.0.0-15.0.1.an8.x86_64.rpm                                         135 kB/s |  15 kB     00:00    
+(2/9): conntrack-tools-1.4.4-11.0.1.an8.x86_64.rpm                                               1.0 MB/s | 184 kB     00:00    
+(3/9): libnetfilter_cttimeout-1.0.0-11.0.1.an8.x86_64.rpm                                         80 kB/s |  15 kB     00:00    
+(4/9): libnetfilter_queue-1.0.5-1.an8.x86_64.rpm                                                 316 kB/s |  31 kB     00:00    
+(5/9): kubeadm-1.33.2-150500.1.1.x86_64.rpm                                                      759 kB/s |  12 MB     00:16    
+(6/9): kubectl-1.33.2-150500.1.1.x86_64.rpm                                                      522 kB/s |  11 MB     00:22    
+(7/9): cri-tools-1.33.0-150500.1.1.x86_64.rpm                                                    329 kB/s | 7.5 MB     00:23    
+(8/9): kubelet-1.33.2-150500.1.1.x86_64.rpm                                                      1.8 MB/s |  15 MB     00:08    
+(9/9): kubernetes-cni-1.6.0-150500.1.1.x86_64.rpm                                                1.1 MB/s | 8.0 MB     00:07    
+---------------------------------------------------------------------------------------------------------------------------------
+总计                                                                                             1.9 MB/s |  55 MB     00:29     
+Kubernetes                                                                                       6.6 kB/s | 1.7 kB     00:00    
+导入 GPG 公钥 0x9A296436:
+ Userid: "isv:kubernetes OBS Project <isv:kubernetes@build.opensuse.org>"
+ 指纹: DE15 B144 86CD 377B 9E87 6E1A 2346 54DA 9A29 6436
+ 来自: https://mirrors.tuna.tsinghua.edu.cn/kubernetes/core%3A/stable%3A/v1.33/rpm/repodata/repomd.xml.key
+导入公钥成功
+运行事务检查
+事务检查成功。
+运行事务测试
+事务测试成功。
+运行事务
+  准备中  :                                                                                                                  1/1 
+  安装    : kubernetes-cni-1.6.0-150500.1.1.x86_64                                                                           1/9 
+  安装    : cri-tools-1.33.0-150500.1.1.x86_64                                                                               2/9 
+  安装    : libnetfilter_queue-1.0.5-1.an8.x86_64                                                                            3/9 
+  安装    : libnetfilter_cttimeout-1.0.0-11.0.1.an8.x86_64                                                                   4/9 
+  运行脚本: libnetfilter_cttimeout-1.0.0-11.0.1.an8.x86_64                                                                   4/9 
+/sbin/ldconfig: /usr/lib64/llvm15/lib/libclang.so.15 不是符号链接
+
+
+  安装    : libnetfilter_cthelper-1.0.0-15.0.1.an8.x86_64                                                                    5/9 
+  运行脚本: libnetfilter_cthelper-1.0.0-15.0.1.an8.x86_64                                                                    5/9 
+/sbin/ldconfig: /usr/lib64/llvm15/lib/libclang.so.15 不是符号链接
+
+
+  安装    : conntrack-tools-1.4.4-11.0.1.an8.x86_64                                                                          6/9 
+  运行脚本: conntrack-tools-1.4.4-11.0.1.an8.x86_64                                                                          6/9 
+  安装    : kubelet-1.33.2-150500.1.1.x86_64                                                                                 7/9 
+  运行脚本: kubelet-1.33.2-150500.1.1.x86_64                                                                                 7/9 
+  安装    : kubeadm-1.33.2-150500.1.1.x86_64                                                                                 8/9 
+  安装    : kubectl-1.33.2-150500.1.1.x86_64                                                                                 9/9 
+  运行脚本: kubectl-1.33.2-150500.1.1.x86_64                                                                                 9/9 
+/sbin/ldconfig: /usr/lib64/llvm15/lib/libclang.so.15 不是符号链接
+
+
+  验证    : conntrack-tools-1.4.4-11.0.1.an8.x86_64                                                                          1/9 
+  验证    : libnetfilter_cthelper-1.0.0-15.0.1.an8.x86_64                                                                    2/9 
+  验证    : libnetfilter_cttimeout-1.0.0-11.0.1.an8.x86_64                                                                   3/9 
+  验证    : libnetfilter_queue-1.0.5-1.an8.x86_64                                                                            4/9 
+  验证    : cri-tools-1.33.0-150500.1.1.x86_64                                                                               5/9 
+  验证    : kubeadm-1.33.2-150500.1.1.x86_64                                                                                 6/9 
+  验证    : kubectl-1.33.2-150500.1.1.x86_64                                                                                 7/9 
+  验证    : kubelet-1.33.2-150500.1.1.x86_64                                                                                 8/9 
+  验证    : kubernetes-cni-1.6.0-150500.1.1.x86_64                                                                           9/9 
+
+已安装:
+  conntrack-tools-1.4.4-11.0.1.an8.x86_64                        cri-tools-1.33.0-150500.1.1.x86_64                             
+  kubeadm-1.33.2-150500.1.1.x86_64                               kubectl-1.33.2-150500.1.1.x86_64                               
+  kubelet-1.33.2-150500.1.1.x86_64                               kubernetes-cni-1.6.0-150500.1.1.x86_64                         
+  libnetfilter_cthelper-1.0.0-15.0.1.an8.x86_64                  libnetfilter_cttimeout-1.0.0-11.0.1.an8.x86_64                 
+  libnetfilter_queue-1.0.5-1.an8.x86_64                         
+
+完毕！
+
+```
+
+### 启动kubelet并设置开机启动
+```shell
+[ares@ares-master ~]$ sudo systemctl enable --now kubelet
+Created symlink /etc/systemd/system/multi-user.target.wants/kubelet.service → /usr/lib/systemd/system/kubelet.service.
+```
+
+### 添加kubectl,kubeadm命令补全
+```shell
+[ares@ares-master ~]$ kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
+[ares@ares-master ~]$ kubeadm completion bash | sudo tee /etc/bash_completion.d/kubeadm > /dev/null
+```
