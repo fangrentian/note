@@ -20,7 +20,7 @@ Anolis OS release 8.10
 ```
 
 ## 使用 ELRepo 仓库升级内核
-> 参照清华大学开源软件镜像站[https://mirrors.tuna.tsinghua.edu.cn/help/elrepo/]
+> [参照清华大学开源软件镜像站](https://mirrors.tuna.tsinghua.edu.cn/help/elrepo/)
 ### 导入 ELRepo 仓库的公共密钥
 ```shell
 [ares@ares-master ~]$ sudo rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
@@ -67,7 +67,7 @@ elrepo-release-8.el8.elrepo.noarch.rpm                                          
 
 ### 编辑elrepo配置
 
-然后编辑 /etc/yum.repos.d/elrepo.repo 文件，在 mirrorlist= 开头的行前面加 # 注释掉；并将 `http://elrepo.org/linux` 替换为`https://mirrors.tuna.tsinghua.edu.cn/elrepo`
+然后编辑 `/etc/yum.repos.d/elrepo.repo` 文件，在 `mirrorlist=` 开头的行前面加 # 注释掉；并将 `http://elrepo.org/linux` 替换为`https://mirrors.tuna.tsinghua.edu.cn/elrepo`
 
 ### 重新建立 `yum`缓存
 ```shell
@@ -113,8 +113,8 @@ python3-perf.x86_64
 ```
 
 > 常见选项：
-kernel-ml: 最新主线稳定版（推荐）
-kernel-lt: 长期维护版
+> - kernel-ml: 最新主线稳定版（推荐）
+> - kernel-lt: 长期维护版
 
 ### 安装 `kernel-ml`最新版内核
 ```shell
@@ -252,7 +252,7 @@ Removed /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
 ```
 
 ##  关闭Swap分区
-Kubernetes 默认不允许节点启用 Swap。
+Kubernetes 默认不允许节点启用 `Swap`。
 ```shell
 [ares@ares-master ~]$ sudo swapoff -a
 [ares@ares-master ~]$ sudo sed -i '/swap/d' /etc/fstab
@@ -455,7 +455,7 @@ Docker CE Stable - x86_64                                                       
   - package runc-1:1.1.12-1.0.1.module+an8.9.0+11182+f2fff746.x86_64 from AppStream is filtered out by modular filtering
 (尝试在命令行中添加 '--allowerasing' 来替换冲突的软件包 或 '--skip-broken' 来跳过无法安装的软件包 或 '--nobest' 来不只使用软件包的最佳候选)
 ```
-说明你在安装 containerd.io 的时候，系统中已有的 runc 版本与 containerd 不兼容，并且和 podman 等组件有冲突。使用 --allowerasing 强制替换冲突的 runc
+上面报错提示安装 `containerd.io` 的时候，系统中已有的 `runc` 版本与 `containerd` 不兼容，并且和 `podman` 等组件有冲突。使用 `--allowerasing` 强制替换冲突的 `runc`
 
 ```shell
 [ares@ares-master ~]$ sudo yum install -y containerd.io --allowerasing
@@ -782,21 +782,21 @@ version = 2
 ```
 
 #### 修改配置以支持 systemd cgroup 驱动
-把/etc/containerd/config.toml文件中的`SystemdCgroup`配置改为true
+把`/etc/containerd/config.toml`文件中的`SystemdCgroup`配置改为`true`
 
 #### 修改`sandbox_image`配置
-把/etc/containerd/config.toml文件中的`sandbox_image`由原来的`registry.k8s.io/pause:3.6`改为`registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.10`
+把`/etc/containerd/config.toml`文件中的`sandbox_image`由原来的`registry.k8s.io/pause:3.6`改为`registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.10`
 > 其它镜像代理
 >- [DaoCloud](docker.m.daocloud.io/k8s-gcr-mirror/pause:3.10)
 
 #### 配置镜像仓库
-在/etc/containerd/config.toml文件中找到`[plugins."io.containerd.grpc.v1.cri".registry]`,配置`config_path`
+在`/etc/containerd/config.toml`文件中找到`[plugins."io.containerd.grpc.v1.cri".registry]`,配置`config_path`
 
 ```shell
 [plugins."io.containerd.grpc.v1.cri".registry]
   config_path = "/etc/containerd/certs.d"
 ```
-在`certs.d`目录下创建相应的文件夹, 在每个目录下添加 hosts.toml 文件定义镜像代理
+在`certs.d`目录下创建相应的文件夹, 在每个目录下添加 `hosts.toml` 文件定义镜像代理
 
 ```shell
 [ares@ares-master ~]$ sudo mkdir -p /etc/containerd/certs.d/docker.io
@@ -805,7 +805,7 @@ version = 2
 [ares@ares-master ~]$ sudo mkdir -p /etc/containerd/certs.d/quay.io
 [ares@ares-master ~]$ sudo mkdir -p /etc/containerd/certs.d/ghcr.io
 ```
-按一下格式创建hosts.toml文件
+按一下格式创建`hosts.toml`文件
 ```shell
 server = "https://k8s.gcr.io"
 
@@ -851,7 +851,7 @@ Created symlink /etc/systemd/system/multi-user.target.wants/containerd.service �
 ```
 
 #### 安装crictl,并配置命令补全
-crictl 是一个用来管理容器运行时的命令行工具，它就像是一个“中间人”，帮助 Kubernetes 和容器运行时（比如 containerd）之间进行通信。
+`crictl` 是一个用来管理容器运行时的命令行工具，它就像是一个“中间人”，帮助 Kubernetes 和容器运行时（比如 containerd）之间进行通信。
 
 1. runtime-endpoint
 这个字段告诉 crictl，容器运行时（containerd）的运行时接口地址在哪里。这里写的是 unix:///run/containerd/containerd.sock，意思就是通过 Unix 套接字（socket）的方式，连接到 /run/containerd/containerd.sock 这个地址。简单来说，就是告诉 crictl 怎么和 containerd 通信。
@@ -873,7 +873,7 @@ IMAGE               TAG                 IMAGE ID            SIZE
 ```
 
 ## 安装nerdctl工具
-nerdctl 是一个 兼容 Docker CLI 命令风格 的容器管理工具。它是为 containerd 设计的，适用于不使用 Docker Engine 的环境。支持 Compose、Build、Image 管理等高级功能（需要额外组件如 buildkit）。
+`nerdctl` 是一个 兼容 Docker CLI 命令风格 的容器管理工具。它是为 containerd 设计的，适用于不使用 Docker Engine 的环境。支持 Compose、Build、Image 管理等高级功能（需要额外组件如 buildkit）。
 
 ```shell
 [ares@ares-slave1 ~]$ sudo wget https://github.com/containerd/nerdctl/releases/download/v2.1.2/nerdctl-full-2.1.2-linux-amd64.tar.gz
@@ -1005,6 +1005,8 @@ share/doc/nerdctl-full/SHA256SUMS
 ```shell
 [ares@ares-master ~]$ nerdctl --version
 nerdctl version 2.1.2
+[ares@ares-master ~]$ sudo nerdctl --version
+bash: nerdctl: 未找到命令...
 ```
 
 ### 只能以普通用户运行,不能以sudo运行, 但是containerd需要sudo运行
