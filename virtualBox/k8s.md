@@ -786,8 +786,11 @@ version = 2
 
 #### 修改`sandbox_image`配置
 把`/etc/containerd/config.toml`文件中的`sandbox_image`由原来的`registry.k8s.io/pause:3.6`改为`registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.10`
-> 其它镜像代理
->- [DaoCloud](docker.m.daocloud.io/k8s-gcr-mirror/pause:3.10)
+
+其它镜像代理配置说明
+
+- [DaoCloud](https://gitee.com/daocloud/public-image-mirror)
+- [南京大学](https://doc.nju.edu.cn/books/e1654/page/gcr)
 
 #### 配置镜像仓库
 在`/etc/containerd/config.toml`文件中找到`[plugins."io.containerd.grpc.v1.cri".registry]`,配置`config_path`
@@ -802,6 +805,7 @@ version = 2
 [ares@ares-master ~]$ sudo mkdir -p /etc/containerd/certs.d/docker.io
 [ares@ares-master ~]$ sudo mkdir -p /etc/containerd/certs.d/gcr.io
 [ares@ares-master ~]$ sudo mkdir -p /etc/containerd/certs.d/k8s.gcr.io
+[ares@ares-master ~]$ sudo mkdir -p /etc/containerd/certs.d/registry.k8s.io
 [ares@ares-master ~]$ sudo mkdir -p /etc/containerd/certs.d/quay.io
 [ares@ares-master ~]$ sudo mkdir -p /etc/containerd/certs.d/ghcr.io
 ```
