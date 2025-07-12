@@ -790,7 +790,7 @@ version = 2
 其它镜像代理配置说明
 
 - [DaoCloud](https://gitee.com/daocloud/public-image-mirror)
-- [南京大学](https://doc.nju.edu.cn/books/e1654/page/gcr)
+- [南京大学](https://doc.nju.edu.cn/books/e1654)
 
 #### 配置镜像仓库
 在`/etc/containerd/config.toml`文件中找到`[plugins."io.containerd.grpc.v1.cri".registry]`,配置`config_path`
@@ -2130,3 +2130,122 @@ ares-master   Ready    control-plane   3h43m   v1.33.2
 ares-slave    Ready    worker          23m     v1.33.2
 ares-slave1   Ready    worker          18m     v1.33.2
 ```
+
+## 安装 `csi-driver-nfs` 驱动, 使用NFS支持持久化
+
+需要用到`git`, 先安装`git`工具
+```shell
+[ares@ares-master ~]$ yum install git
+错误：运行此命令需要管理员特权（多数系统下是root用户）。
+[ares@ares-master ~]$ sudo yum install git
+[sudo] ares 的密码：
+上次元数据过期检查：2:18:23 前，执行于 2025年07月12日 星期六 07时10分12秒。
+依赖关系解决。
+==================================================================================================================================
+ 软件包                             架构                     版本                               仓库                         大小
+==================================================================================================================================
+安装:
+ git                                x86_64                   2.43.5-3.0.1.an8                   AppStream                    92 k
+安装依赖关系:
+ git-core                           x86_64                   2.43.5-3.0.1.an8                   AppStream                    11 M
+ git-core-doc                       noarch                   2.43.5-3.0.1.an8                   AppStream                   3.1 M
+ perl-Error                         noarch                   1:0.17025-2.el8                    AppStream                    45 k
+ perl-Git                           noarch                   2.43.5-3.0.1.an8                   AppStream                    78 k
+ perl-TermReadKey                   x86_64                   2.37-7.0.1.an8                     AppStream                    33 k
+
+事务概要
+==================================================================================================================================
+安装  6 软件包
+
+总下载：14 M
+安装大小：46 M
+确定吗？[y/N]： y
+下载软件包：
+(1/6): git-2.43.5-3.0.1.an8.x86_64.rpm                                                            610 kB/s |  92 kB     00:00    
+(2/6): perl-Error-0.17025-2.el8.noarch.rpm                                                        467 kB/s |  45 kB     00:00    
+(3/6): perl-Git-2.43.5-3.0.1.an8.noarch.rpm                                                       524 kB/s |  78 kB     00:00    
+(4/6): perl-TermReadKey-2.37-7.0.1.an8.x86_64.rpm                                                 175 kB/s |  33 kB     00:00    
+(5/6): git-core-doc-2.43.5-3.0.1.an8.noarch.rpm                                                   1.1 MB/s | 3.1 MB     00:02    
+(6/6): git-core-2.43.5-3.0.1.an8.x86_64.rpm                                                       1.9 MB/s |  11 MB     00:05    
+----------------------------------------------------------------------------------------------------------------------------------
+总计                                                                                              2.5 MB/s |  14 MB     00:05     
+运行事务检查
+事务检查成功。
+运行事务测试
+事务测试成功。
+运行事务
+  准备中  :                                                                                                                   1/1 
+  安装    : git-core-2.43.5-3.0.1.an8.x86_64                                                                                  1/6 
+  安装    : git-core-doc-2.43.5-3.0.1.an8.noarch                                                                              2/6 
+  安装    : perl-TermReadKey-2.37-7.0.1.an8.x86_64                                                                            3/6 
+  安装    : perl-Error-1:0.17025-2.el8.noarch                                                                                 4/6 
+  安装    : perl-Git-2.43.5-3.0.1.an8.noarch                                                                                  5/6 
+  安装    : git-2.43.5-3.0.1.an8.x86_64                                                                                       6/6 
+  运行脚本: git-2.43.5-3.0.1.an8.x86_64                                                                                       6/6 
+/sbin/ldconfig: /usr/lib64/llvm15/lib/libclang.so.15 不是符号链接
+
+
+  验证    : git-2.43.5-3.0.1.an8.x86_64                                                                                       1/6 
+  验证    : git-core-2.43.5-3.0.1.an8.x86_64                                                                                  2/6 
+  验证    : git-core-doc-2.43.5-3.0.1.an8.noarch                                                                              3/6 
+  验证    : perl-Error-1:0.17025-2.el8.noarch                                                                                 4/6 
+  验证    : perl-Git-2.43.5-3.0.1.an8.noarch                                                                                  5/6 
+  验证    : perl-TermReadKey-2.37-7.0.1.an8.x86_64                                                                            6/6 
+
+已安装:
+  git-2.43.5-3.0.1.an8.x86_64              git-core-2.43.5-3.0.1.an8.x86_64        git-core-doc-2.43.5-3.0.1.an8.noarch         
+  perl-Error-1:0.17025-2.el8.noarch        perl-Git-2.43.5-3.0.1.an8.noarch        perl-TermReadKey-2.37-7.0.1.an8.x86_64       
+
+完毕！
+[ares@ares-master ~]$ git --version
+git version 2.43.5
+```
+
+拉取 `csi-driver-nfs` 驱动安装包,安装,验证
+```shell
+[ares@ares-master ~]$ git clone https://github.com/kubernetes-csi/csi-driver-nfs.git
+正克隆到 'csi-driver-nfs'...
+remote: Enumerating objects: 41627, done.
+remote: Counting objects: 100% (573/573), done.
+remote: Compressing objects: 100% (217/217), done.
+remote: Total 41627 (delta 472), reused 360 (delta 353), pack-reused 41054 (from 3)
+接收对象中: 100% (41627/41627), 42.44 MiB | 3.70 MiB/s, 完成.
+处理 delta 中: 100% (23719/23719), 完成.
+[ares@ares-master ~]$ cd csi-driver-nfs/
+[ares@ares-master csi-driver-nfs]$ ./deploy/install-driver.sh v4.11.0 local
+use local deploy
+Installing NFS CSI driver, version: v4.11.0 ...
+serviceaccount/csi-nfs-controller-sa created
+serviceaccount/csi-nfs-node-sa created
+clusterrole.rbac.authorization.k8s.io/nfs-external-provisioner-role created
+clusterrolebinding.rbac.authorization.k8s.io/nfs-csi-provisioner-binding created
+clusterrole.rbac.authorization.k8s.io/nfs-external-resizer-role created
+clusterrolebinding.rbac.authorization.k8s.io/nfs-csi-resizer-role created
+csidriver.storage.k8s.io/nfs.csi.k8s.io created
+deployment.apps/csi-nfs-controller created
+daemonset.apps/csi-nfs-node created
+NFS CSI driver installed successfully.
+
+[ares@ares-slave csi-driver-nfs]$ ./deploy/install-driver.sh v4.11.0 local
+use local deploy
+Installing NFS CSI driver, version: v4.11.0 ...
+error: error validating "./deploy/v4.11.0/rbac-csi-nfs.yaml": error validating data: failed to download openapi: Get "http://localhost:8080/openapi/v2?timeout=32s": dial tcp [::1]:8080: connect: connection refused; if you choose to ignore these errors, turn validation off with --validate=false
+
+[ares@ares-master ~]$ kubectl -n kube-system get pods
+NAME                                  READY   STATUS    RESTARTS        AGE
+coredns-757cc6c8f8-5vtdv              1/1     Running   2 (21h ago)     3d16h
+coredns-757cc6c8f8-ld2jz              1/1     Running   2 (21h ago)     3d16h
+csi-nfs-controller-5bf646f7cc-zztwt   5/5     Running   2 (2m3s ago)    6m27s
+csi-nfs-node-n5wtd                    3/3     Running   1 (3m45s ago)   6m27s
+csi-nfs-node-whcfz                    3/3     Running   1 (93s ago)     6m27s
+csi-nfs-node-wkfcg                    3/3     Running   1 (2m51s ago)   6m27s
+etcd-ares-master                      1/1     Running   2 (21h ago)     3d16h
+kube-apiserver-ares-master            1/1     Running   2 (21h ago)     3d16h
+kube-controller-manager-ares-master   1/1     Running   2 (21h ago)     3d16h
+kube-proxy-f6j52                      1/1     Running   2 (21h ago)     3d16h
+kube-proxy-g688q                      1/1     Running   2 (21h ago)     3d13h
+kube-proxy-m4vcb                      1/1     Running   2 (21h ago)     3d13h
+kube-scheduler-ares-master            1/1     Running   2 (21h ago)     3d16h
+```
+驱动在`slave`节点上安装时校验`openapi`失败, 这里只安装在`master`节点上, 一个`csi-nfs-controller`, 三个`csi-nfs-node`已处于运行状态
+> 注意: 先进入 `csi-driver-nfs`目录再安装
