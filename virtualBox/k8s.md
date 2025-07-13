@@ -2133,6 +2133,9 @@ ares-slave1   Ready    worker          18m     v1.33.2
 
 ## 安装 `csi-driver-nfs` 驱动, 使用NFS支持持久化
 
+NFS服务器信息, windows server2019, NFS共享目录为`192.168.4.148/virtualboxShare`,
+建子目录`k8s`, 包含两个测试文件, `index.html`和`502.html`
+
 需要用到`git`, 先安装`git`工具
 ```shell
 [ares@ares-master ~]$ yum install git
@@ -2201,7 +2204,7 @@ ares-slave1   Ready    worker          18m     v1.33.2
 git version 2.43.5
 ```
 
-拉取 `csi-driver-nfs` 驱动安装包,安装,验证
+### 拉取 `csi-driver-nfs` 驱动安装包,安装,验证
 ```shell
 [ares@ares-master ~]$ git clone https://github.com/kubernetes-csi/csi-driver-nfs.git
 正克隆到 'csi-driver-nfs'...
@@ -2248,4 +2251,76 @@ kube-proxy-m4vcb                      1/1     Running   2 (21h ago)     3d13h
 kube-scheduler-ares-master            1/1     Running   2 (21h ago)     3d16h
 ```
 驱动在`slave`节点上安装时校验`openapi`失败, 这里只安装在`master`节点上, 一个`csi-nfs-controller`, 三个`csi-nfs-node`已处于运行状态
+
 > 注意: 先进入 `csi-driver-nfs`目录再安装
+
+### 建测试`deployment`测试nfs挂载, `pod`直接挂载nfs服务, 没有经过`pv`和`pvc`
+```yaml
+# deploy-nginx-nfs.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-nginx-nfs
+spec:
+  selector:
+    matchLabels:
+      app: deploy-nginx-nfs
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: deploy-nginx-nfs
+    spec:
+      containers:
+        - image: docker.io/nginx
+          name: nginx-nfs
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /usr/share/nginx/html
+              name: nginx-nfs-volume
+      volumes:
+        - name: nginx-nfs-volume
+          nfs:
+            server: 192.168.4.148
+            path: /virtualboxShare/k8s
+            readOnly: false
+```
+部署并测试
+```shell
+[ares@ares-master ~]$ kubectl apply -f k8sconf/deploy-nginx-nfs.yaml
+deployment.apps/deploy-nginx-nfs created
+[ares@ares-master ~]$ kubectl get pods -o wide
+NAME                                READY   STATUS    RESTARTS   AGE   IP               NODE          NOMINATED NODE   READINESS GATES
+deploy-nginx-nfs-6c96b5b5fd-5m94j   1/1     Running   0          10s   10.244.213.174   ares-slave    <none>           <none>
+deploy-nginx-nfs-6c96b5b5fd-7ngrf   1/1     Running   0          10s   10.244.29.61     ares-slave1   <none>           <none>
+deploy-nginx-nfs-6c96b5b5fd-cpwf2   1/1     Running   0          10s   10.244.29.62     ares-slave1   <none>           <none>
+[ares@ares-master ~]$ kubectl exec -ti deploy-nginx-nfs-6c96b5b5fd-cpwf2 -- ls /usr/share/nginx/html
+502.html  index.html
+[ares@ares-master ~]$ curl 10.244.29.61
+<html>
+<head><title>403 Forbidden</title></head>
+<body>
+<center><h1>403 Forbidden</h1></center>
+<hr><center>nginx/1.29.0</center>
+</body>
+</html>
+```
+由上述测试, 访问`deploy-nginx-nfs-6c96b5b5fd-cpwf2`节点的挂载目录, 已可以正常看见nfs目录下的文件, 但是通过`curl`访问`pod`上的nginx默认页面, 提示`403 Forbidden`, 
+需要配置`NTFS权限`, 添加`Everyone`用户, 并授权`Read & execute`和`Read`权限, windows server2019 nfs配置如下
+![](./images/nfs1.png)
+
+![](./images/nfs2.png)
+
+![](./images/nfs3.png)
+
+![](./images/nfs4.png)
+
+重新测试, 可以正常访问
+```shell
+[ares@ares-master ~]$ curl 10.244.29.61
+hello
+[ares@ares-master ~]$ curl 10.244.29.61/502.html
+502
+```
+### 通过`pv`和`pvc`使用nfs服务
