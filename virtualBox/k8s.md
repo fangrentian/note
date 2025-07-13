@@ -2324,3 +2324,101 @@ hello
 502
 ```
 ### 通过`pv`和`pvc`使用nfs服务
+```yaml
+# deploy-nginx-nfs-pv-pvc.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-nginx-nfs
+spec:
+  selector:
+    matchLabels:
+      app: deploy-nginx-nfs
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: deploy-nginx-nfs
+    spec:
+      containers:
+      - image: docker.io/nginx
+        name: nginx-nfs
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: nginx-nfs-volume
+      volumes:
+      - name: nginx-nfs-volume
+        persistentVolumeClaim:
+          claimName: pvc-nfs
+
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name:  pv-nfs
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  nfs:
+    server: 192.168.4.148
+    path: /virtualboxShare/k8s
+
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-nfs
+spec:
+  storageClassName: ""
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 3Gi
+```
+
+```shell
+[ares@ares-master ~]$ vim k8sconf/deploy-nginx-nfs-pv-pvc.yaml 
+[ares@ares-master ~]$ kubectl apply -f k8sconf/deploy-nginx-nfs-pv-pvc.yaml 
+deployment.apps/deploy-nginx-nfs created
+persistentvolume/pv-nfs created
+persistentvolumeclaim/pvc-nfs created
+[ares@ares-master ~]$ kubectl get deployments -o wide
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES            SELECTOR
+deploy-nginx-nfs   3/3     3            3           27s   nginx-nfs    docker.io/nginx   app=deploy-nginx-nfs
+[ares@ares-master ~]$ kubectl get pods -o wide
+NAME                                READY   STATUS    RESTARTS   AGE   IP               NODE          NOMINATED NODE   READINESS GATES
+deploy-nginx-nfs-796b88bbf7-k6rcm   1/1     Running   0          45s   10.244.29.63     ares-slave1   <none>           <none>
+deploy-nginx-nfs-796b88bbf7-trxht   1/1     Running   0          45s   10.244.29.2      ares-slave1   <none>           <none>
+deploy-nginx-nfs-796b88bbf7-zvrts   1/1     Running   0          45s   10.244.213.175   ares-slave    <none>           <none>
+[ares@ares-master ~]$ kubectl get pv -o wide
+NAME     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM             STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE   VOLUMEMODE
+pv-nfs   5Gi        RWX            Retain           Bound    default/pvc-nfs                  <unset>                          65s   Filesystem
+[ares@ares-master ~]$ kubectl get pvc -o wide
+NAME      STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE   VOLUMEMODE
+pvc-nfs   Bound    pv-nfs   5Gi        RWX                           <unset>                 97s   Filesystem
+[ares@ares-master ~]$ curl 10.244.29.63
+hello
+
+[ares@ares-master ~]$ kubectl expose deployments/deploy-nginx-nfs
+service/deploy-nginx-nfs exposed
+[ares@ares-master ~]$ kubectl get svc
+NAME               TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE
+deploy-nginx-nfs   ClusterIP   10.111.234.150   <none>        80/TCP    19s
+kubernetes         ClusterIP   10.96.0.1        <none>        443/TCP   4d20h
+[ares@ares-master ~]$ curl 10.111.234.150
+hello
+```
+部署后可以正常访问挂载的nfs文件, 通过`service`的`CLUSTER-IP`也可正常访问
