@@ -2422,3 +2422,145 @@ kubernetes         ClusterIP   10.96.0.1        <none>        443/TCP   4d20h
 hello
 ```
 部署后可以正常访问挂载的nfs文件, 通过`service`的`CLUSTER-IP`也可正常访问
+
+
+### 通过`storageClass`使用`csi-driver-nfs`驱动挂载 windows server nfs服务
+```yaml
+# deploy-nginx-nfs-storageclass.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-csi
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: 192.168.4.148
+  share: /virtualboxShare/k8s
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+mountOptions:
+  - rw
+  - hard
+  - nfsvers=4.1
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-nfs-storageclass
+  namespace: default
+spec:
+  storageClassName: nfs-csi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 3Gi
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-nginx-nfs-storageclass
+spec:
+  selector:
+    matchLabels:
+      app: deploy-nginx-nfs-storageclass
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: deploy-nginx-nfs-storageclass
+    spec:
+      containers:
+        - image: docker.io/nginx
+          name: nginx-nfs-storageclass
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /usr/share/nginx/html
+              name: nginx-nfs-storageclass-volume
+      volumes:
+        - name: nginx-nfs-storageclass-volume
+          persistentVolumeClaim:
+            claimName: pvc-nfs-storageclass
+```
+
+一开始总是连不上windows server nfs服务器, 各种错误提示:
+```
+  Warning  ProvisioningFailed    7s (x6 over 38s)   nfs.csi.k8s.io_ares-slave_54184589-5fa2-45a4-9214-b179e1f6e086  failed to provision volume with StorageClass "storageclass-nfs": rpc error: code = Internal desc = failed to mount nfs server: rpc error: code = Internal desc = mount failed: exit status 32
+Mounting command: mount
+Mounting arguments: -t nfs -o nfsvers=4.11 192.168.4.108:/virtualboxShare/k8s /tmp/pvc-498784fe-455c-4eec-a2f3-950914b850ef
+Output: mount.nfs: an incorrect mount option was specified
+
+
+  Warning  ProvisioningFailed    6s (x9 over 2m27s)    nfs.csi.k8s.io_ares-slave_54184589-5fa2-45a4-9214-b179e1f6e086  failed to provision volume with StorageClass "nfs-csi": rpc error: code = Internal desc = failed to make subdirectory: mkdir /tmp/pvc-c4cdcaf6-5af2-4e53-a153-ad54b47c6b48/pvc-c4cdcaf6-5af2-4e53-a153-ad54b47c6b48: read-only file system
+  
+
+Mounting arguments: -t nfs -o rw,hard,nfsvers=4.1 192.168.4.148:/virtualboxShare/k8s /tmp/pvc-49c5d4de-6681-43c4-9093-1e390da7d144
+Output: mount.nfs: access denied by server while mounting 192.168.4.148:/virtualboxShare/k8s
+```
+但是通过手动挂载,没有问题
+```shell
+[ares@ares-master ~]$ sudo mount -t nfs -o vers=4.1 192.168.4.148:/virtualboxShare/k8s /mnt
+[ares@ares-master ~]$ ls /mnt
+502.html  index.html
+```
+
+各种改`StorageClass`的`mountOptions`参数, 加`rw`, 加`hard`, `nfsvers`改为`vers`, 都无效, 最后在windows server nfs服务器的配额模块安装了`文件服务器资源管理器`后居然成功了
+
+![](./images/nfs5.png)
+
+不确定是不是这个原因, 把这个`文件服务器资源管理器`删除后, 居然仍然可以成功挂载!!
+
+```shell
+[ares@ares-master ~]$ kubectl apply -f k8sconf/deploy-nginx-nfs-storageclass.yaml
+storageclass.storage.k8s.io/nfs-csi created
+persistentvolumeclaim/pvc-nfs-storageclass created
+deployment.apps/deploy-nginx-nfs-storageclass created
+ares@ares-master ~]$ kubectl get deployments -o wide
+NAME                            READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS               IMAGES            SELECTOR
+deploy-nginx-nfs-storageclass   3/3     3            3           22m   nginx-nfs-storageclass   docker.io/nginx   app=deploy-nginx-nfs-storageclass
+[ares@ares-master ~]$ kubectl get pods -o wide
+NAME                                             READY   STATUS    RESTARTS   AGE   IP               NODE          NOMINATED NODE   READINESS GATES
+deploy-nginx-nfs-storageclass-6cb65d49dc-89w6p   1/1     Running   0          22m   10.244.29.14     ares-slave1   <none>           <none>
+deploy-nginx-nfs-storageclass-6cb65d49dc-9jvjd   1/1     Running   0          22m   10.244.213.181   ares-slave    <none>           <none>
+deploy-nginx-nfs-storageclass-6cb65d49dc-qmxh6   1/1     Running   0          22m   10.244.29.17     ares-slave1   <none>           <none>
+[ares@ares-master ~]$ kubectl get pvc -o wide
+NAME                   STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE   VOLUMEMODE
+pvc-nfs-storageclass   Bound    pvc-79897377-f242-458e-9622-83b325de1332   3Gi        RWX            nfs-csi        <unset>                 22m   Filesystem
+[ares@ares-master ~]$ kubectl get pv -o wide
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                          STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE   VOLUMEMODE
+pvc-79897377-f242-458e-9622-83b325de1332   3Gi        RWX            Delete           Bound    default/pvc-nfs-storageclass   nfs-csi        <unset>                          22m   Filesystem
+[ares@ares-master ~]$ kubectl get sc -o wide
+NAME      PROVISIONER      RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+nfs-csi   nfs.csi.k8s.io   Delete          Immediate           true                   22m
+
+[ares@ares-master ~]$ curl 10.244.29.14
+<html>
+<head><title>403 Forbidden</title></head>
+<body>
+<center><h1>403 Forbidden</h1></center>
+<hr><center>nginx/1.29.0</center>
+</body>
+</html>
+
+[ares@ares-master ~]$ kubectl exec -ti deploy-nginx-nfs-storageclass-6cb65d49dc-89w6p -- eche "helle world\n" > /usr/share/nginx/html/index.html
+-bash: /usr/share/nginx/html/index.html: 没有那个文件或目录
+
+[ares@ares-master ~]$ kubectl exec -ti deploy-nginx-nfs-storageclass-6cb65d49dc-89w6p -- bash
+root@deploy-nginx-nfs-storageclass-6cb65d49dc-89w6p:/# cd /usr/share/nginx/html
+root@deploy-nginx-nfs-storageclass-6cb65d49dc-89w6p:/usr/share/nginx/html# echo "helle world\n" > index.html
+root@deploy-nginx-nfs-storageclass-6cb65d49dc-89w6p:/usr/share/nginx/html# ls
+index.html
+root@deploy-nginx-nfs-storageclass-6cb65d49dc-89w6p:/usr/share/nginx/html# cat index.html 
+helle world\n
+root@deploy-nginx-nfs-storageclass-6cb65d49dc-89w6p:/usr/share/nginx/html# exit
+exit
+[ares@ares-master ~]$ curl 10.244.29.14
+helle world\n
+```
+默认新挂载的是空目录, 所以用`curl`命令访问失败, 进入pod, 添加文件后, 到windows server nfs服务器的共享目录下查看已正确挂载, 再次通过`curl`命令也可以正常访问了
