@@ -543,6 +543,143 @@ container_linux.go:290: starting container process caused "exec: \"htpasswd\": e
 
 据说registry镜像在2.7相关版本中删除了/usr/bin/htpasswd文件，导致创建容器时提醒找不到可执行文件,解决办法用老版 [https://github.com/docker/distribution-library-image/issues/106](https://github.com/docker/distribution-library-image/issues/106)
 
+> 追加内容开始 2025年07月15日 星期二
+
+用了`registry3`, 好像通过宿主机的`htpasswd`工具,或者docker的`httpd:2`镜像也可以,目的是获得加密内容, 如下两种方法都可以
+```shell
+[ares@ares-test ~]$ sudo docker run --rm --entrypoint htpasswd httpd:2 -Bbn root ares
+[sudo] ares 的密码：
+Unable to find image 'httpd:2' locally
+2: Pulling from library/httpd
+3da95a905ed5: Pull complete
+71018c0d16cb: Pull complete
+4f4fb700ef54: Pull complete
+3b93b8c3888b: Pull complete
+c5094faccdbb: Pull complete
+14bacd2841b0: Pull complete
+Digest: sha256:f84fe51ff5d35124e024f51215b443b16c939b24eae747025a515200e71c7d07
+Status: Downloaded newer image for httpd:2
+root:$2y$05$WwHEYerrrhkgq6SGvLd0xO.eDndsEGO4hGiq75xsxdX/DLMX5sFke
+```
+```shell
+[ares@ares-test ~]$ sudo yum install httpd-tools
+[sudo] ares 的密码：
+上次元数据过期检查：1:36:45 前，执行于 2025年07月14日 星期一 13时11分38秒。
+依赖关系解决。
+===============================================================================================
+ 软件包             架构     版本                                            仓库         大小
+===============================================================================================
+安装:
+ httpd-tools        x86_64   2.4.37-65.0.1.module+an8.9.0+11302+fdfeea98.3   AppStream   112 k
+安装依赖关系:
+ apr                x86_64   1.7.0-12.an8                                    AppStream   135 k
+ apr-util           x86_64   1.6.1-9.an8                                     AppStream   105 k
+安装弱的依赖:
+ apr-util-bdb       x86_64   1.6.1-9.an8                                     AppStream    24 k
+ apr-util-openssl   x86_64   1.6.1-9.an8                                     AppStream    26 k
+启用模块流:
+ httpd                       2.4                                                              
+
+事务概要
+===============================================================================================
+安装  5 软件包
+
+总下载：402 k
+安装大小：727 k
+确定吗？[y/N]： y
+下载软件包：
+(1/5): apr-util-bdb-1.6.1-9.an8.x86_64.rpm                     153 kB/s |  24 kB     00:00    
+(2/5): apr-util-1.6.1-9.an8.x86_64.rpm                         479 kB/s | 105 kB     00:00    
+(3/5): apr-1.7.0-12.an8.x86_64.rpm                             514 kB/s | 135 kB     00:00    
+(4/5): apr-util-openssl-1.6.1-9.an8.x86_64.rpm                 241 kB/s |  26 kB     00:00    
+(5/5): httpd-tools-2.4.37-65.0.1.module+an8.9.0+11302+fdfeea98 784 kB/s | 112 kB     00:00    
+-----------------------------------------------------------------------------------------------
+总计                                                           1.1 MB/s | 402 kB     00:00     
+运行事务检查
+事务检查成功。
+运行事务测试
+事务测试成功。
+运行事务
+  准备中  :                                                                                1/1 
+  安装    : apr-1.7.0-12.an8.x86_64                                                        1/5 
+  安装    : apr-util-bdb-1.6.1-9.an8.x86_64                                                2/5 
+  安装    : apr-util-openssl-1.6.1-9.an8.x86_64                                            3/5 
+  安装    : apr-util-1.6.1-9.an8.x86_64                                                    4/5 
+  运行脚本: apr-util-1.6.1-9.an8.x86_64                                                    4/5 
+/sbin/ldconfig: /usr/lib64/llvm15/lib/libclang.so.15 不是符号链接
+
+
+  安装    : httpd-tools-2.4.37-65.0.1.module+an8.9.0+11302+fdfeea98.3.x86_64               5/5 
+  运行脚本: httpd-tools-2.4.37-65.0.1.module+an8.9.0+11302+fdfeea98.3.x86_64               5/5 
+/sbin/ldconfig: /usr/lib64/llvm15/lib/libclang.so.15 不是符号链接
+
+
+  验证    : apr-1.7.0-12.an8.x86_64                                                        1/5 
+  验证    : apr-util-1.6.1-9.an8.x86_64                                                    2/5 
+  验证    : apr-util-bdb-1.6.1-9.an8.x86_64                                                3/5 
+  验证    : apr-util-openssl-1.6.1-9.an8.x86_64                                            4/5 
+  验证    : httpd-tools-2.4.37-65.0.1.module+an8.9.0+11302+fdfeea98.3.x86_64               5/5 
+
+已安装:
+  apr-1.7.0-12.an8.x86_64                                                                      
+  apr-util-1.6.1-9.an8.x86_64                                                                  
+  apr-util-bdb-1.6.1-9.an8.x86_64                                                              
+  apr-util-openssl-1.6.1-9.an8.x86_64                                                          
+  httpd-tools-2.4.37-65.0.1.module+an8.9.0+11302+fdfeea98.3.x86_64                             
+
+完毕！
+[ares@ares-test ~]$ htpasswd -Bbn ares heidelberg
+ares:$2y$05$YGFt03SK.jrKanUbiZMs2OyFfvJ.NkNcOqgfame1WP.r1EAK4unyq
+```
+
+registry `config.yml`配置,环境变量可以直接配置在里面, `docker run`时就不用在指定环境变量了,只要挂载这个`config.yml`配置文件就行
+```yaml
+version: 0.1
+log:
+  level: debug
+  fields:
+    service: registry
+    environment: development
+storage:
+  delete:
+    enabled: true
+  cache:
+    blobdescriptor: inmemory
+  filesystem:
+    rootdirectory: /var/lib/registry
+  tag:
+    concurrencylimit: 5
+http:
+  addr: :5000
+  debug:
+    addr: :5001
+    prometheus:
+      enabled: true
+      path: /metrics
+  tls:
+    certificate: /certs/domain.crt
+    key: /certs/domain.key
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+    threshold: 3
+auth:
+  htpasswd:
+    realm: basic-realm
+    path: /auth/htpasswd
+```
+```shell
+[ares@ares-test ~]$ sudo docker run --name registry --restart=always -p 5000:5000 -v /opt/registry/config/config.yml:/etc/distribution/config.yml -v /opt/registry/data:/var/lib/registry -v /opt/registry/certs:/certs -v /opt/registry/auth:/auth -d registry:latest
+37a3e91ac14629c5829e47f4b23dd1724092b43a884ccbae407c68ac68b86339
+[ares@ares-test ~]$ sudo docker ps -a
+CONTAINER ID   IMAGE             COMMAND                   CREATED         STATUS         PORTS                                       NAMES
+37a3e91ac146   registry:latest   "/entrypoint.sh /etc…"   9 seconds ago   Up 8 seconds   0.0.0.0:5000->5000/tcp, :::5000->5000/tcp   registry
+```
+
+> 追加内容结束
+
+这里降级使用`registry:2.6.2`
 ```shell
 [root@centos7full ~]# docker pull registry:2.6.2
 Trying to pull repository docker.io/library/registry ... 
