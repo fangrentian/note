@@ -293,3 +293,35 @@ Starting nginx:                                            [  OK  ]
 [root@iZuf61hp5ebl72mk8ifn72Z ~]# curl http://localhost:8001
 heidelberg
 ```
+
+## 定时删除nginx日志
+
+### 编写定时任务脚本
+/usr/local/bin/cleanup_nginx_logs.sh
+```shell
+#!/bin/bash
+
+# Nginx日志路径
+LOG_PATH="/var/log/nginx/"
+
+# 删除7天前的日志文件
+find $LOG_PATH -mtime +7 -type f -name *.log -exec rm -rf {} \;
+```
+### 添加定时任务
+使用命令 `crontab -e`, 添加定时任务命令
+```shell
+0 0 * * 1 /usr/local/bin/cleanup_nginx_logs.sh
+```
+
+```shell
+[root@iZuf61hp5ebl72mk8ifn72Z ~]# crontab -e
+no crontab for root - using an empty one
+crontab: installing new crontab
+```
+
+### 重启crond服务
+```shell
+[root@iZuf61hp5ebl72mk8ifn72Z ~]# service crond restart
+Stopping crond:                                            [  OK  ]
+Starting crond:                                            [  OK  ]
+```
