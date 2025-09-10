@@ -307,7 +307,7 @@ LOG_PATH="/var/log/nginx/"
 # 删除7天前的日志文件
 find $LOG_PATH -mtime +7 -type f -name *.log -exec rm -rf {} \;
 ```
-### 添加定时任务
+### 添加定时任务, 增加执行权限
 使用命令 `crontab -e`, 添加定时任务命令
 ```shell
 0 0 * * 1 /usr/local/bin/cleanup_nginx_logs.sh
@@ -317,6 +317,8 @@ find $LOG_PATH -mtime +7 -type f -name *.log -exec rm -rf {} \;
 [root@iZuf61hp5ebl72mk8ifn72Z ~]# crontab -e
 no crontab for root - using an empty one
 crontab: installing new crontab
+
+[root@iZuf61hp5ebl72mk8ifn72Z ~]# chmod +x /usr/local/bin/cleanup_nginx_logs.sh
 ```
 
 ### 重启crond服务
