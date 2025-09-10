@@ -20,6 +20,4 @@ selenium-debug.log
 *.local
 *.iml
 
-package-lock.json
-yarn.lock
 /.idea/
