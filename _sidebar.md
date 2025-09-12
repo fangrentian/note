@@ -49,6 +49,7 @@
   * [使用](jenkins/usage.md)
 * Linux
   * [概述](/linux/overview.md)
+  * [使用](/linux/usage.md)
 * Nginx
   * [使用](/nginx/usage.md)
 * NodeJS
