@@ -103,3 +103,115 @@ VirtualBox最初是以专有软件协议的方式提供。2007年1月，InnoTek�
 4. 硬盘存储类型：分为动态扩展和固定大小两种，其中动态扩展类型最初只需占用非常小的物理硬盘空间，然后根据虚拟机的实际需求动态分配，固定大小类型就是建立时就分配指定的大小给虚拟机使用。后者在性能上有一定优势，但建立时间较长；
 
 5. 摘要：显示虚拟机的各项数据情况，确定后完成虚拟机的创建。
+
+# 扩展虚拟机磁盘 (AnolisOS8)
+
+## 在virtualbox中扩展虚拟机磁盘
+![](./images/wechat_2025-09-16_120252_648.png)
+
+## 在linux系统中配置
+
+### 查询当前状况
+```shell
+[ares@ares-slave ~]$ sudo fdisk -l
+Disk /dev/sda：120 GiB，128849018880 字节，251658240 个扇区
+单元：扇区 / 1 * 512 = 512 字节
+扇区大小(逻辑/物理)：512 字节 / 512 字节
+I/O 大小(最小/最佳)：512 字节 / 512 字节
+磁盘标签类型：dos
+磁盘标识符：0x7a3644b1
+
+设备       启动    起点      末尾      扇区 大小 Id 类型
+/dev/sda1  *       2048   2099199   2097152   1G 83 Linux
+/dev/sda2       2099200 167772159 165672960  79G 8e Linux LVM
+
+
+Disk /dev/mapper/ao-root：47.7 GiB，51225034752 字节，100048896 个扇区
+单元：扇区 / 1 * 512 = 512 字节
+扇区大小(逻辑/物理)：512 字节 / 512 字节
+I/O 大小(最小/最佳)：512 字节 / 512 字节
+
+
+Disk /dev/mapper/ao-swap：8 GiB，8589934592 字节，16777216 个扇区
+单元：扇区 / 1 * 512 = 512 字节
+扇区大小(逻辑/物理)：512 字节 / 512 字节
+I/O 大小(最小/最佳)：512 字节 / 512 字节
+
+
+Disk /dev/mapper/ao-home：23.3 GiB，25006440448 字节，48840704 个扇区
+单元：扇区 / 1 * 512 = 512 字节
+扇区大小(逻辑/物理)：512 字节 / 512 字节
+I/O 大小(最小/最佳)：512 字节 / 512 字节
+
+[ares@ares-slave ~]$ df -h
+文件系统             容量  已用  可用 已用% 挂载点
+devtmpfs             4.9G     0  4.9G    0% /dev
+tmpfs                4.9G     0  4.9G    0% /dev/shm
+tmpfs                4.9G   13M  4.9G    1% /run
+/dev/mapper/ao-root   48G  8.8G   39G   19% /
+/dev/mapper/ao-home   24G  542M   23G    3% /home
+/dev/sda1           1014M  346M  669M   35% /boot
+shm                   64M     0   64M    0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/be56730523d83fdb37b2808898ba6c4ce6d0a4a88ea8a002aceca5b1d371fb7d/shm
+shm                   64M     0   64M    0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/bd60d61554424cf679a9607722f48b63a03306c581f05d3ed7a4906d669c2a65/shm
+shm                   64M     0   64M    0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/6dd77e8bcc860459f31b72b88020d4c26122d5ce6aae61c1a4608fa6d783fac5/shm
+shm                   64M     0   64M    0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/d77b3b355192abb26fc2d1c78f49b5653c98f0c94833aa3f4cd1990837888278/shm
+tmpfs                995M   16K  995M    1% /run/user/42
+tmpfs                995M  8.0K  995M    1% /run/user/1000
+shm                   64M     0   64M    0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/5abf37b43adee7054f68e1f56c7da4403b010f2d80ef92ac92c5f7e950bca55b/shm
+```
+
+### 使用 `parted` 工具扩展 `/dev/sda2` 分区
+
+将第2个分区扩展到磁盘末尾
+```shell
+[ares@ares-slave ~]$ sudo parted /dev/sda resizepart 2 100%
+信息: You may need to update /etc/fstab.
+
+```
+
+### 通知内核重新读取分区表或重启系统
+```shell
+[ares@ares-slave ~]$ sudo partprobe /dev/sda 
+```
+
+### 扩展逻辑卷到最大可用空间的70%
+```shell
+[ares@ares-slave ~]$ sudo lvextend -l +70%FREE /dev/mapper/ao-root
+  Size of logical volume ao/root changed from <47.71 GiB (12213 extents) to <75.71 GiB (19381 extents).
+  Logical volume ao/root successfully resized.
+```
+
+### 扩展文件系统, `xfs`类型使用`xfs_growfs`命令, `ext4`类型使用`resize2fs`命令
+```shell
+[ares@ares-slave ~]$ sudo blkid /dev/mapper/ao-root
+/dev/mapper/ao-root: UUID="ec592f92-df88-4dc6-adc7-5207da9a5838" BLOCK_SIZE="512" TYPE="xfs"
+
+[ares@ares-slave ~]$ sudo xfs_growfs /dev/mapper/ao-root
+meta-data=/dev/mapper/ao-root    isize=512    agcount=4, agsize=3126528 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=1, sparse=1, rmapbt=0
+         =                       reflink=1    bigtime=0 inobtcount=0
+data     =                       bsize=4096   blocks=12506112, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+log      =internal log           bsize=4096   blocks=6106, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+data blocks changed from 12506112 to 19846144
+
+[ares@ares-slave ~]$ df -h
+文件系统             容量  已用  可用 已用% 挂载点
+devtmpfs             4.9G     0  4.9G    0% /dev
+tmpfs                4.9G     0  4.9G    0% /dev/shm
+tmpfs                4.9G   13M  4.9G    1% /run
+/dev/mapper/ao-root   76G  9.0G   67G   12% /
+/dev/mapper/ao-home   24G  542M   23G    3% /home
+/dev/sda1           1014M  346M  669M   35% /boot
+shm                   64M     0   64M    0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/be56730523d83fdb37b2808898ba6c4ce6d0a4a88ea8a002aceca5b1d371fb7d/shm
+shm                   64M     0   64M    0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/bd60d61554424cf679a9607722f48b63a03306c581f05d3ed7a4906d669c2a65/shm
+shm                   64M     0   64M    0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/6dd77e8bcc860459f31b72b88020d4c26122d5ce6aae61c1a4608fa6d783fac5/shm
+shm                   64M     0   64M    0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/d77b3b355192abb26fc2d1c78f49b5653c98f0c94833aa3f4cd1990837888278/shm
+tmpfs                995M   16K  995M    1% /run/user/42
+tmpfs                995M  8.0K  995M    1% /run/user/1000
+shm                   64M     0   64M    0% /run/containerd/io.containerd.grpc.v1.cri/sandboxes/5abf37b43adee7054f68e1f56c7da4403b010f2d80ef92ac92c5f7e950bca55b/shm
+```
