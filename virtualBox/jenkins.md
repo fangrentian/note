@@ -126,3 +126,124 @@ apt-cache madison jenkins
 apt-get install -y jenkins=2.346.1
 ```
     2.346.1支持Java 8, Java 11, or Java 17 2.164.1支持Java 8, Java 11
+
+# VirtualBox Anolis OS release 8.10虚拟机环境下jenkins2.516.3前端项目配置
+
+## 安装volta工具
+```shell
+mkdir /usr/local/volta
+sudo chmod 777 /usr/local/volta/
+curl https://get.volta.sh | bash
+```
+
+## 安装nodejs和pnpm(根据需要安装对应版本)
+```shell
+volta install node@19.9.0
+volta install pnpm@8.3.1
+```
+
+## 给jenkins账户添加volta目录读权限
+```shell
+sudo chown -R jenkins:jenkins /usr/local/volta/
+```
+
+## 设置pnpm镜像
+```shell
+pnpm config set registry https://registry.npmmirror.com/
+```
+
+## 配置 Jenkins 全局变量, 增加volta配置
+![](./images/wechat_2025-09-20_123301_663.png)
+
+## 配置凭证
+![](./images/wechat_2025-09-20_123724_200.png)
+
+## freestyle项目配置
+![](./images/wechat_2025-09-20_124104_262.png)
+
+## pipeline项目配置
+```shell
+pipeline {
+    agent any
+
+    environment {
+        BASTION_HOST = 'xxx.aliyuncs.com'  // 堡垒机地址
+        BASTION_USER = 'username'               // 堡垒机用户名
+        BASTION_PORT = '61122'                  // 堡垒机SSH端口
+        INTERNAL_IP = '172.16.0.5'        // 内部服务器IP
+        INTERNAL_USER = 'root'               // 内部服务器用户名
+        LOCAL_DIR = 'public/'    // 本地文件夹路径(必须存在)
+        REMOTE_DIR = '/usr/share/nginx/html/test/'            // 内部服务器目标路径(必须存在)
+        TUNNEL_PORT = '2222'                // 本地转发端口(使用非特权端口 2222 替代端口 22，避免权限问题)
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'master',
+                    url: '项目地址',
+                    credentialsId: 'jenkins中创建的git凭证ID'
+            }
+        }
+        
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                    pnpm install
+                '''
+            }
+        }
+        
+        stage('Build Project') {
+            steps {
+                sh '''
+                    pnpm build
+                '''
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                withCredentials([usernamePassword(
+                  credentialsId: 'jenkins中创建的堡垒机凭证ID',
+                  usernameVariable: 'SSH_USER',
+                  passwordVariable: 'SSH_PASS'
+                )]) {
+                      sh '''
+                        # 将凭据保存到文件而不是在命令行中传递
+                        echo "$SSH_PASS" > /tmp/ssh_pass_file
+                        chmod 600 /tmp/ssh_pass_file
+                        
+                        # 使用高权限端口(避免使用1-1024端口)
+                        TUNNEL_PORT=${TUNNEL_PORT}
+                        
+                        # 建立SSH隧道
+                        sshpass -f /tmp/ssh_pass_file ssh -o StrictHostKeyChecking=no \\
+                          -o PreferredAuthentications=password \\
+                          -o PubkeyAuthentication=no \\
+                          -L ${TUNNEL_PORT}:${INTERNAL_IP}:22 \\
+                          ${SSH_USER}@${BASTION_HOST} -p ${BASTION_PORT} -Nf -M -S /tmp/ssh_tunnel_socket &
+                        
+                        # 等待隧道建立
+                        sleep 5
+                        
+                        # 通过隧道上传文件
+                        sshpass -p "" scp -o StrictHostKeyChecking=no -P ${TUNNEL_PORT} \\
+                          -r ${LOCAL_DIR}/* root@127.0.0.1:${REMOTE_DIR} || {
+                            echo "SCP failed, listing directory contents for debugging:"
+                            ls -la ${LOCAL_DIR}
+                            exit 1
+                          }
+                          
+                        # 关闭SSH隧道
+                        ssh -S /tmp/ssh_tunnel_socket -O exit ${SSH_USER}@${BASTION_HOST} 2>/dev/null || true
+                        
+                        # 清理临时文件
+                        rm -f /tmp/ssh_pass_file
+                    '''
+                    }
+            }
+        }
+    }
+}
+```
