@@ -268,3 +268,51 @@ killall nginx
 ```shell
 service nginx start
 ```
+
+
+# 静态资源防盗链及认证配置
+
+1. 防盗链原理, 通过浏览器在站内请求资源时, 请求头中会携带Referer字段, 该字段记录了请求来源的域名. 而直接通过地址栏访问资源时, 该字段为空. 所以, 通过判断该字段, 来判断请求的来源是否合法.
+2. 权限认证原理, 请求资源时在url后追加token参数, 通过`auth_request`指令指向校验接口并附带token参数, 校验接口返回状态码200,表示可以正常访问, 其它表示无权限.
+
+```shell
+ location /mes/data/file/ {
+     # 只允许来自指定域名的请求
+     valid_referers test.ittun.com;
+
+    if ($invalid_referer) {
+         # 记录日志
+         access_log  logs/static/access-$logdate.log custom;
+         # 返回 403 禁止访问
+         return 403;
+         # 或者返回替代图片
+         # rewrite ^/.*$ /forbidden.jpg last;
+    }
+
+
+     #set $auth_token $arg_token;    #从请求查询参数中获取token参数,传递给校验接口
+
+     #auth_request /auth/file;
+
+     # 校验接口返回状态码200,表示可以正常访问, 其它表示无权限
+
+     alias static/;
+ }
+
+location /auth/file {
+	 internal; #限制 /auth/file 路径无法被外部访问
+    
+     proxy_pass http://localhost:8080/auth/file;  # 转发到后端进行Token验证
+     
+
+     proxy_set_header Host $host;
+     proxy_set_header X-Real-IP $remote_addr;
+     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+     proxy_set_header X-Original-URI "$request_uri";
+
+     proxy_pass_request_body off;
+     proxy_set_header Content-Length "";
+     proxy_set_header Authorization "$auth_token";  # 将Token作为Authorization头发送
+ }
+
+```
