@@ -10,11 +10,11 @@
     <link rel="stylesheet" href="./static/css/ares_hover_variant.min.css">
     <link rel="stylesheet" href="./static/css/fa.css">
     <link rel="stylesheet" href="./static/css/icon.css">
-    <!-- <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/docsify/4.13.1/themes/buble.css"> -->
-    <!-- <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/docsify/4.13.1/themes/dark.css"> -->
-    <!-- <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/docsify/4.13.1/themes/dolphin.css"> -->
-    <!-- <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/docsify/4.13.1/themes/pure.css"> -->
-    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/docsify/4.13.1/themes/vue.css">
+    <!-- <link rel="stylesheet" href="./static/js/docsify/themes/buble.css"> -->
+    <!-- <link rel="stylesheet" href="./static/js/docsify/themes/dark.css"> -->
+    <!-- <link rel="stylesheet" href="./static/js/docsify/themes/dolphin.css"> -->
+    <!-- <link rel="stylesheet" href="./static/js/docsify/themes/pure.css"> -->
+    <link rel="stylesheet" href="./static/js/docsify/themes/vue.css">
     <link rel="stylesheet" href="./static/css/ares_reboot.css">
     <link rel="stylesheet" href="./static/css/note.css"/>
   </head>
@@ -22,6 +22,7 @@
     <div id="app"></div>
     <script>
       window.$docsify = {
+        basePath: '/',
         auto2top: true,
         logo: '/static/images/logo.png',
         loadNavbar: true,
@@ -36,15 +37,19 @@
           buttonText : '复制',
           errorText  : '复制出错',
           successText: '复制成功'
-        }
+        },
+        alias: {
+          '/.*/_sidebar.md': '/_sidebar.md',
+          '/.*/_navbar.md': '/_navbar.md'
+        },
       }
     </script>
-    <!-- Docsify v4 -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/docsify/4.13.1/docsify.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/docsify/4.13.1/plugins/search.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/docsify/4.13.1/plugins/zoom-image.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/docsify-copy-code/3.0.0/docsify-copy-code.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/prism/9000.0.1/components/prism-bash.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/prism/9000.0.1/components/prism-java.min.js"></script>
+
+    <script src="./static/js/docsify/lib/docsify.js"></script>
+    <script src="./static/js/docsify/lib/plugins/search.min.js"></script>
+    <script src="./static/js/docsify/lib/plugins/zoom-image.min.js"></script>
+    <script src="./static/js/docsify-copy-code/dist/docsify-copy-code.js"></script>
+    <script src="./static/js/prismjs/components/prism-bash.min.js"></script>
+    <script src="./static/js/prismjs/components/prism-java.min.js"></script>
   </body>
 </html>
