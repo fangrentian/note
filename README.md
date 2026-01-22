@@ -1,3 +1,4 @@
 
 ## 个人笔记
-[https://happyares.xyz/](https://happyares.xyz/)
+[happyares.xyz](happyares.xyz)
+[happyares.eu.org](happyares.eu.org)
