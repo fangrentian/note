@@ -4,4 +4,10 @@
 
 [happyares.eu.org](happyares.eu.org)
 
-[note-6cm.pages.dev](note-6cm.pages.dev)
+[happyares.us.ci](happyares.us.ci)
+
+[happyares.de5.net](happyares.de5.net)
+
+[happyares.ccwu.cc](happyares.ccwu.cc)
+
+[happyares.cc.cd](happyares.cc.cd)
